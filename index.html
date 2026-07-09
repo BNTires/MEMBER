@@ -161,23 +161,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
           <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
           <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="date" id="r-birthday"></div>
         </div>
-        <p class="sec-title">ที่อยู่ / Address</p>
-        <div class="field"><label>ที่อยู่<span class="req">*</span></label><textarea id="r-address" placeholder="บ้านเลขที่ / ถนน / ซอย"></textarea></div>
-        <div class="field"><label>ภาค<span class="req">*</span></label>
-          <select id="r-region" onchange="App.onRegionChange()"><option value="">-- เลือกภาค --</option></select>
-        </div>
-        <div class="field"><label>จังหวัด<span class="req">*</span></label>
-          <select id="r-province" onchange="App.onProvinceChange()" disabled><option value="">-- เลือกภาคก่อน --</option></select>
-        </div>
-        <div class="field"><label>เขต/อำเภอ<span class="req">*</span></label>
-          <select id="r-district" onchange="App.onDistrictChange()" disabled><option value="">-- เลือกจังหวัดก่อน --</option></select>
-        </div>
-        <div class="row">
-          <div class="field"><label>ตำบล/แขวง<span class="req">*</span></label>
-            <select id="r-subdistrict" onchange="App.onSubDistrictChange()" disabled><option value="">-- เลือกอำเภอก่อน --</option></select>
-          </div>
-          <div class="field narrow"><label>รหัสไปรษณีย์</label><input type="text" id="r-zip" readonly placeholder="อัตโนมัติ"></div>
-        </div>
+        <!-- ★ Address section removed — a fixed default address is now submitted automatically -->
         <p class="sec-title">รถคันแรก / First vehicle</p>
         <div class="row">
           <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
@@ -222,8 +206,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
             <dt>ชื่อ-นามสกุล</dt><dd id="mi-name"></dd>
             <dt>เบอร์โทร</dt><dd id="mi-phone"></dd>
             <dt>วันเกิด</dt><dd id="mi-birthday"></dd>
-            <dt>จังหวัด</dt><dd id="mi-province"></dd>
-            <dt>รหัสไปรษณีย์</dt><dd id="mi-zip"></dd>
           </dl>
         </div>
         <div class="member-actions">
@@ -236,7 +218,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
   <!-- EDIT PAGE -->
   <div class="page" id="page-edit">
     <div class="card">
-      <div class="card-header"><h1>แก้ไขข้อมูล / Edit Profile</h1><p>แก้ไขข้อมูลส่วนตัวและที่อยู่</p></div>
+      <div class="card-header"><h1>แก้ไขข้อมูล / Edit Profile</h1><p>แก้ไขข้อมูลส่วนตัว</p></div>
       <div class="card-body">
         <button class="btn-back" onclick="App.showPage('page-member')">← กลับ / Back</button>
         <p class="sec-title">ข้อมูลส่วนตัว / Personal info</p>
@@ -251,23 +233,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
           <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="e-phone" maxlength="10"></div>
           <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="date" id="e-birthday"></div>
         </div>
-        <p class="sec-title">ที่อยู่ / Address</p>
-        <div class="field"><label>ที่อยู่<span class="req">*</span></label><textarea id="e-address"></textarea></div>
-        <div class="field"><label>ภาค<span class="req">*</span></label>
-          <select id="e-region" onchange="App.onEditRegionChange()"><option value="">-- เลือกภาค --</option></select>
-        </div>
-        <div class="field"><label>จังหวัด<span class="req">*</span></label>
-          <select id="e-province" onchange="App.onEditProvinceChange()" disabled><option value="">-- เลือกภาคก่อน --</option></select>
-        </div>
-        <div class="field"><label>เขต/อำเภอ<span class="req">*</span></label>
-          <select id="e-district" onchange="App.onEditDistrictChange()" disabled><option value="">-- เลือกจังหวัดก่อน --</option></select>
-        </div>
-        <div class="row">
-          <div class="field"><label>ตำบล/แขวง<span class="req">*</span></label>
-            <select id="e-subdistrict" onchange="App.onEditSubDistrictChange()" disabled><option value="">-- เลือกอำเภอก่อน --</option></select>
-          </div>
-          <div class="field narrow"><label>รหัสไปรษณีย์</label><input type="text" id="e-zip" readonly></div>
-        </div>
+        <!-- ★ Address section removed — fixed default address stays unchanged on edit -->
         <div class="err-msg" id="editErr"></div>
         <div id="editOk" style="display:none;font-size:13px;color:#1e7e34;margin-top:8px;text-align:center">✓ บันทึกเรียบร้อยแล้ว</div>
         <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล / Save</span></button>
@@ -315,6 +281,14 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 // ── CONFIG ──────────────────────────────────────────────────
 var LIFF_ID    = "2010142778-E4fdEFh0";
 var API_URL    = "https://script.google.com/macros/s/AKfycbwUZDCc-Q7sxG_3MmX7acTc-Q2_CId8MakWBiYVWgNJufNZ5G1saxAap4tLKqpROolxyA/exec";
+
+// ★ Fixed default address — every member gets this, no longer typed by the customer
+var FIXED_ADDRESS      = "3/47";
+var FIXED_REGION       = "ภาคกลาง";
+var FIXED_PROVINCE     = "สมุทรปราการ";
+var FIXED_DISTRICT     = "บางพลี";
+var FIXED_SUBDISTRICT  = "บางพลีใหญ่";
+var FIXED_ZIP          = "10540";
 
 // ── STATE ────────────────────────────────────────────────────
 var _member      = null;
@@ -402,20 +376,14 @@ App.start = function() {
         apiGet({ action:"checkLineUser", lineUserId:profile.userId })
           .catch(function(){ return { exists:false, error:"checkLineUser failed" }; }),
         apiGet({ action:"getCarData" })
-          .catch(function(){ return { success:false, brands:[] }; }),
-        apiGet({ action:"getThaiData" })
-          .catch(function(){ return { success:false, data:{} }; })
+          .catch(function(){ return { success:false, brands:[] }; })
       ]);
     })
     .then(function(results) {
       var memberRes = results[0];
       var carRes    = results[1];
-      var thaiRes   = results[2];
 
       if (carRes.success && carRes.brands)  _carData    = carRes.brands;
-      if (thaiRes.success && thaiRes.data)  _clientData = thaiRes.data;
-
-      _populateRegions();
 
       if (memberRes.exists) {
         _member = memberRes.member;
@@ -432,17 +400,8 @@ App.start = function() {
     });
 };
 
-// ── Populate region dropdowns ────────────────────────────────
+// ── Populate car brand dropdowns ──────────────────────────────
 function _populateRegions() {
-  if (!_clientData) return;
-  var regions = Object.keys(_clientData).sort();
-  ["r-region","e-region"].forEach(function(id) {
-    var sel = document.getElementById(id); if(!sel) return;
-    while(sel.options.length) sel.remove(0);
-    var ph=document.createElement("option"); ph.value=""; ph.textContent="-- เลือกภาค --"; sel.appendChild(ph);
-    regions.forEach(function(r){ var o=document.createElement("option"); o.value=r; o.textContent=r; sel.appendChild(o); });
-  });
-  // Populate car brand dropdowns
   var brandSelIds = ["r-carbrand","m-carbrand"];
   brandSelIds.forEach(function(id){
     var sel=document.getElementById(id); if(!sel) return;
@@ -452,61 +411,6 @@ function _populateRegions() {
     var oo=document.createElement("option"); oo.value="__other__"; oo.textContent="อื่นๆ (Other)"; sel.appendChild(oo);
   });
 }
-
-// ── Address cascade ──────────────────────────────────────────
-function _cascadeProvince(regionId, provinceId, districtId, subdistrictId, zipId) {
-  var region = document.getElementById(regionId).value;
-  var CD = _clientData||{};
-  _resetSels(provinceId, districtId, subdistrictId, zipId);
-  if(!region||!CD[region]) return;
-  var pSel=document.getElementById(provinceId);
-  Object.keys(CD[region]).sort().forEach(function(p){var o=document.createElement("option");o.value=p;o.textContent=p;pSel.appendChild(o);});
-  pSel.disabled=false;
-}
-function _cascadeDistrict(regionId, provinceId, districtId, subdistrictId, zipId) {
-  var r=document.getElementById(regionId).value, p=document.getElementById(provinceId).value;
-  var CD=_clientData||{};
-  _resetSels(districtId, subdistrictId, zipId);
-  if(!r||!p||!CD[r]||!CD[r][p]) return;
-  var dSel=document.getElementById(districtId);
-  Object.keys(CD[r][p]).sort().forEach(function(d){var o=document.createElement("option");o.value=d;o.textContent=d;dSel.appendChild(o);});
-  dSel.disabled=false;
-}
-function _cascadeSubdistrict(regionId, provinceId, districtId, subdistrictId, zipId) {
-  var r=document.getElementById(regionId).value,p=document.getElementById(provinceId).value,d=document.getElementById(districtId).value;
-  var CD=_clientData||{};
-  _resetSels(subdistrictId, zipId);
-  if(!r||!p||!d||!CD[r]||!CD[r][p]||!CD[r][p][d]) return;
-  var sSel=document.getElementById(subdistrictId);
-  while(sSel.options.length)sSel.remove(0);
-  var ph=document.createElement("option");ph.value="";ph.textContent="-- เลือกตำบล --";sSel.appendChild(ph);
-  CD[r][p][d].forEach(function(s){var o=document.createElement("option");o.value=s.name;o.textContent=s.name;o.dataset.zip=s.zip;sSel.appendChild(o);});
-  sSel.disabled=false;
-}
-function _setZip(subdistrictId, zipId) {
-  var sel=document.getElementById(subdistrictId),opt=sel.options[sel.selectedIndex];
-  document.getElementById(zipId).value=(opt&&opt.dataset.zip)?opt.dataset.zip:"";
-}
-function _resetSels() {
-  var args=Array.prototype.slice.call(arguments);
-  args.forEach(function(id){
-    var el=document.getElementById(id); if(!el)return;
-    if(el.tagName==="SELECT"){while(el.options.length)el.remove(0);var o=document.createElement("option");o.value="";o.textContent="-- เลือกก่อน --";el.appendChild(o);el.disabled=true;}
-    else el.value="";
-  });
-}
-
-// Register cascade
-App.onRegionChange    = function(){ _cascadeProvince("r-region","r-province","r-district","r-subdistrict","r-zip"); };
-App.onProvinceChange  = function(){ _cascadeDistrict("r-region","r-province","r-district","r-subdistrict","r-zip"); };
-App.onDistrictChange  = function(){ _cascadeSubdistrict("r-region","r-province","r-district","r-subdistrict","r-zip"); };
-App.onSubDistrictChange = function(){ _setZip("r-subdistrict","r-zip"); };
-
-// Edit cascade
-App.onEditRegionChange    = function(){ _cascadeProvince("e-region","e-province","e-district","e-subdistrict","e-zip"); };
-App.onEditProvinceChange  = function(){ _cascadeDistrict("e-region","e-province","e-district","e-subdistrict","e-zip"); };
-App.onEditDistrictChange  = function(){ _cascadeSubdistrict("e-region","e-province","e-district","e-subdistrict","e-zip"); };
-App.onEditSubDistrictChange = function(){ _setZip("e-subdistrict","e-zip"); };
 
 // ── Car cascade ──────────────────────────────────────────────
 App.onCarBrandChange = function(brandId, modelId, brandWrapId, modelWrapId) {
@@ -535,15 +439,15 @@ App.showRegisterPage = function() {
     document.getElementById("line-display-name").textContent = _lineProfile.displayName||"";
     document.getElementById("line-profile-bar").style.display="flex";
   }
+  _populateRegions();
   // Warn if dropdown data didn't load
-  if (!_carData.length || !_clientData) {
+  if (!_carData.length) {
     showErr("regErr","ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ / Data not loaded, please wait and retry");
     setTimeout(function() {
       // Retry loading missing data
-      var calls = [];
-      if (!_carData.length)  calls.push(apiGet({action:"getCarData"}).then(function(r){if(r.success)_carData=r.brands;}));
-      if (!_clientData)      calls.push(apiGet({action:"getThaiData"}).then(function(r){if(r.success)_clientData=r.data;}));
-      Promise.all(calls).then(function(){ _populateRegions(); hideErr("regErr"); });
+      apiGet({action:"getCarData"}).then(function(r){
+        if(r.success){ _carData=r.brands; _populateRegions(); hideErr("regErr"); }
+      });
     }, 1500);
   }
   App.showPage("page-register");
@@ -556,23 +460,17 @@ App.submitRegister = function() {
   var lname=document.getElementById("r-lname").value.trim();
   var phone=document.getElementById("r-phone").value.trim();
   var birthday=document.getElementById("r-birthday").value;
-  var address=document.getElementById("r-address").value.trim();
-  var region=document.getElementById("r-region").value;
-  var province=document.getElementById("r-province").value;
-  var district=document.getElementById("r-district").value;
-  var subdistrict=document.getElementById("r-subdistrict").value;
   var license=document.getElementById("r-license").value.trim();
   var carbrand=document.getElementById("r-carbrand").value;
   var carmodel=document.getElementById("r-carmodel").value;
   if(carbrand==="__other__") carbrand=document.getElementById("r-carbrand-other").value.trim();
   if(carmodel==="__other__") carmodel=document.getElementById("r-carmodel-other").value.trim();
 
-  if(!title||!fname||!lname||!phone||!birthday||!address||!region||!province||!district||!subdistrict||!license||!carbrand||!carmodel){
+  if(!title||!fname||!lname||!phone||!birthday||!license||!carbrand||!carmodel){
     var missing=[];
     if(!title)missing.push("คำนำหน้า");if(!fname)missing.push("ชื่อ");if(!lname)missing.push("นามสกุล");
-    if(!phone)missing.push("เบอร์โทร");if(!birthday)missing.push("วันเกิด");if(!address)missing.push("ที่อยู่");
-    if(!region)missing.push("ภาค");if(!province)missing.push("จังหวัด");if(!district)missing.push("อำเภอ");
-    if(!subdistrict)missing.push("ตำบล");if(!license)missing.push("ทะเบียน");
+    if(!phone)missing.push("เบอร์โทร");if(!birthday)missing.push("วันเกิด");
+    if(!license)missing.push("ทะเบียน");
     if(!carbrand)missing.push("ยี่ห้อรถ");if(!carmodel)missing.push("รุ่นรถ");
     showErr("regErr","กรุณากรอก: "+missing.join(", ")); return;
   }
@@ -581,8 +479,9 @@ App.submitRegister = function() {
   apiPost({ action:"saveMember", data:{
     lineUserId:_lineProfile?_lineProfile.userId:"",
     title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday,
-    address:address,region:region,province:province,district:district,
-    subdistrict:subdistrict,zipcode:document.getElementById("r-zip").value,
+    // ★ Fixed default address — no longer typed by the customer
+    address:FIXED_ADDRESS,region:FIXED_REGION,province:FIXED_PROVINCE,district:FIXED_DISTRICT,
+    subdistrict:FIXED_SUBDISTRICT,zipcode:FIXED_ZIP,
     carbrand:carbrand,carmodel:carmodel,license:license
   }})
   .then(function(res){
@@ -603,8 +502,6 @@ App.showMemberPage = function() {
   document.getElementById("mi-name").textContent     = full;
   document.getElementById("mi-phone").textContent    = fmtPhone(_member.phone);
   document.getElementById("mi-birthday").textContent = fmtBirthday(_member.birthday);
-  document.getElementById("mi-province").textContent = (_member.district?_member.district+", ":"")+(_member.province||"—");
-  document.getElementById("mi-zip").textContent      = _member.zipcode||"—";
   _carIdx=0; _renderSwiper();
   App.showPage("page-member");
 };
@@ -618,8 +515,6 @@ App.updateMemberInfo = function(m) {
   document.getElementById("mi-name").textContent     = full;
   document.getElementById("mi-phone").textContent    = fmtPhone(m.phone);
   document.getElementById("mi-birthday").textContent = fmtBirthday(m.birthday);
-  document.getElementById("mi-province").textContent = (m.district?m.district+", ":"")+(m.province||"—");
-  document.getElementById("mi-zip").textContent      = m.zipcode||"—";
 };
 
 // ── Car swiper ───────────────────────────────────────────────
@@ -725,40 +620,11 @@ App.confirmDelete = function(){
 App.openEdit = function() {
   var m=_member;
   function _sel(id,val){var el=document.getElementById(id);if(!el)return;for(var i=0;i<el.options.length;i++){if(el.options[i].value===val){el.selectedIndex=i;return;}}}
-  function _populate(selId,keys){
-    var sel=document.getElementById(selId);while(sel.options.length)sel.remove(0);
-    var ph=document.createElement("option");ph.value="";ph.textContent="-- เลือก --";sel.appendChild(ph);
-    keys.forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=k;sel.appendChild(o);});
-    sel.disabled=keys.length===0;
-  }
   _sel("e-title",m.title);
   document.getElementById("e-fname").value   = m.firstname||"";
   document.getElementById("e-lname").value   = m.lastname||"";
   document.getElementById("e-phone").value   = m.phone||"";
   document.getElementById("e-birthday").value= m.birthday||"";
-  document.getElementById("e-address").value = m.address||"";
-  // Reset address dropdowns then pre-fill
-  var CD=_clientData||{};
-  _resetSels("e-province","e-district","e-subdistrict","e-zip");
-  _sel("e-region",m.region);
-  if(m.region&&CD[m.region]){
-    _populate("e-province",Object.keys(CD[m.region]).sort());
-    _sel("e-province",m.province);
-    if(m.province&&CD[m.region][m.province]){
-      _populate("e-district",Object.keys(CD[m.region][m.province]).sort());
-      _sel("e-district",m.district);
-      if(m.district&&CD[m.region][m.province][m.district]){
-        var sSel=document.getElementById("e-subdistrict");
-        while(sSel.options.length)sSel.remove(0);
-        var ph=document.createElement("option");ph.value="";ph.textContent="-- เลือก --";sSel.appendChild(ph);
-        CD[m.region][m.province][m.district].forEach(function(s){var o=document.createElement("option");o.value=s.name;o.textContent=s.name;o.dataset.zip=s.zip;sSel.appendChild(o);});
-        sSel.disabled=false;
-        _sel("e-subdistrict",m.subdistrict);
-        var selOpt=sSel.options[sSel.selectedIndex];
-        document.getElementById("e-zip").value=(selOpt&&selOpt.dataset.zip)?selOpt.dataset.zip:(m.zipcode||"");
-      }
-    }
-  }
   hideErr("editErr");
   document.getElementById("editOk").style.display="none";
   App.showPage("page-edit");
@@ -772,24 +638,18 @@ App.saveEdit = function(){
   var lname=document.getElementById("e-lname").value.trim();
   var phone=document.getElementById("e-phone").value.trim();
   var birthday=document.getElementById("e-birthday").value;
-  var address=document.getElementById("e-address").value.trim();
-  var region=document.getElementById("e-region").value;
-  var province=document.getElementById("e-province").value;
-  var district=document.getElementById("e-district").value;
-  var subdistrict=document.getElementById("e-subdistrict").value;
-  var zipcode=document.getElementById("e-zip").value;
-  if(!title||!fname||!lname||!phone||!birthday||!address||!region||!province||!district||!subdistrict){
+  if(!title||!fname||!lname||!phone||!birthday){
     showErr("editErr","กรุณากรอกข้อมูลให้ครบถ้วน"); return;
   }
   setLoading("saveEditBtn","saveEditLabel",true,"");
-  apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday,address:address,region:region,province:province,district:district,subdistrict:subdistrict,zipcode:zipcode}})
+  // ★ Address fields are no longer editable here — the member's address
+  //   stays whatever was already saved (fixed default for new signups).
+  apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday}})
     .then(function(res){
       setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล / Save");
       if(!res.success){showErr("editErr","เกิดข้อผิดพลาด: "+res.error);return;}
       _member.title=title;_member.firstname=fname;_member.lastname=lname;
-      _member.phone=phone;_member.birthday=birthday;_member.address=address;
-      _member.region=region;_member.province=province;_member.district=district;
-      _member.subdistrict=subdistrict;_member.zipcode=zipcode;
+      _member.phone=phone;_member.birthday=birthday;
       App.updateMemberInfo(_member);
       document.getElementById("editOk").style.display="block";
       setTimeout(function(){document.getElementById("editOk").style.display="none";},3000);
