@@ -145,13 +145,12 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <p class="sec-title">ข้อมูลส่วนตัว / Personal info</p>
         <div class="row">
           <div class="field narrow">
-            <label>คำนำหน้า<span class="req">*</span></label>
+            <label>Title<span class="req">*</span></label>
             <select id="r-title">
-              <option value="">-- เลือก --</option>
-              <option value="นาย">นาย (Mr.)</option>
-              <option value="นาง">นาง (Mrs.)</option>
-              <option value="นางสาว">นางสาว (Ms.)</option>
-              <option value="ดร.">ดร. (Dr.)</option>
+              <option value="">-- Select --</option>
+              <option value="Mr.">Mr.</option>
+              <option value="Ms.">Ms.</option>
+              <option value="Mrs.">Mrs.</option>
             </select>
           </div>
           <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
@@ -159,7 +158,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="r-lname" placeholder="นามสกุล"></div>
         <div class="row">
           <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
-          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="date" id="r-birthday"></div>
+          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
         </div>
         <!-- ★ Address section removed — a fixed default address is now submitted automatically -->
         <p class="sec-title">รถคันแรก / First vehicle</p>
@@ -223,15 +222,15 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <button class="btn-back" onclick="App.showPage('page-member')">← กลับ / Back</button>
         <p class="sec-title">ข้อมูลส่วนตัว / Personal info</p>
         <div class="row">
-          <div class="field narrow"><label>คำนำหน้า<span class="req">*</span></label>
-            <select id="e-title"><option value="">-- เลือก --</option><option value="นาย">นาย (Mr.)</option><option value="นาง">นาง (Mrs.)</option><option value="นางสาว">นางสาว (Ms.)</option><option value="ดร.">ดร. (Dr.)</option></select>
+          <div class="field narrow"><label>Title<span class="req">*</span></label>
+            <select id="e-title"><option value="">-- Select --</option><option value="Mr.">Mr.</option><option value="Ms.">Ms.</option><option value="Mrs.">Mrs.</option></select>
           </div>
           <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="e-fname"></div>
         </div>
         <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="e-lname"></div>
         <div class="row">
           <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="e-phone" maxlength="10"></div>
-          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="date" id="e-birthday"></div>
+          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="e-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
         </div>
         <!-- ★ Address section removed — fixed default address stays unchanged on edit -->
         <div class="err-msg" id="editErr"></div>
@@ -354,6 +353,42 @@ function resetSel(id,ph){
   var o=document.createElement("option"); o.value=""; o.textContent=ph; s.appendChild(o);
 }
 
+// ── ★ Birthday mask: user types digits only, auto-formats as __/__/____ ──
+function attachDateMask(inputId) {
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  el.addEventListener("input", function() {
+    var digits = el.value.replace(/\D/g, "").slice(0, 8);
+    var out = digits.slice(0, 2);
+    if (digits.length > 2) out += "/" + digits.slice(2, 4);
+    if (digits.length > 4) out += "/" + digits.slice(4, 8);
+    el.value = out;
+  });
+}
+
+// ── ★ Reads the DD/MM/YYYY masked input, auto-converts Buddhist Era (พ.ศ.)
+//    to Gregorian/Worldwide (ค.ศ.) if the year looks like a BE year (>2400),
+//    and returns a normal ISO "YYYY-MM-DD" string for storage. ──
+function getBirthdayISO(inputId) {
+  var raw = (document.getElementById(inputId).value || "").replace(/\D/g, "");
+  if (raw.length < 8) return "";
+  var day   = parseInt(raw.slice(0, 2), 10);
+  var month = parseInt(raw.slice(2, 4), 10);
+  var year  = parseInt(raw.slice(4, 8), 10);
+  if (year > 2400) year -= 543; // Buddhist Era → Gregorian
+  var mm = String(month).padStart(2, "0");
+  var dd = String(day).padStart(2, "0");
+  return year + "-" + mm + "-" + dd;
+}
+
+// ── ★ Converts a stored ISO date back into DD/MM/YYYY for display in the mask input ──
+function isoToDisplayDate(iso) {
+  if (!iso) return "";
+  var parts = String(iso).split("-");
+  if (parts.length !== 3) return "";
+  return parts[2].slice(0, 2) + "/" + parts[1] + "/" + parts[0];
+}
+
 // ── App init ─────────────────────────────────────────────────
 App.retryLogin = function() {
   document.getElementById("login-error").style.display  = "none";
@@ -460,7 +495,7 @@ App.submitRegister = function() {
   var fname=document.getElementById("r-fname").value.trim();
   var lname=document.getElementById("r-lname").value.trim();
   var phone=document.getElementById("r-phone").value.trim();
-  var birthday=document.getElementById("r-birthday").value;
+  var birthday=getBirthdayISO("r-birthday");
   var license=document.getElementById("r-license").value.trim();
   var carbrand=document.getElementById("r-carbrand").value;
   var carmodel=document.getElementById("r-carmodel").value;
@@ -625,7 +660,7 @@ App.openEdit = function() {
   document.getElementById("e-fname").value   = m.firstname||"";
   document.getElementById("e-lname").value   = m.lastname||"";
   document.getElementById("e-phone").value   = m.phone||"";
-  document.getElementById("e-birthday").value= m.birthday||"";
+  document.getElementById("e-birthday").value= isoToDisplayDate(m.birthday);
   hideErr("editErr");
   document.getElementById("editOk").style.display="none";
   App.showPage("page-edit");
@@ -638,7 +673,7 @@ App.saveEdit = function(){
   var fname=document.getElementById("e-fname").value.trim();
   var lname=document.getElementById("e-lname").value.trim();
   var phone=document.getElementById("e-phone").value.trim();
-  var birthday=document.getElementById("e-birthday").value;
+  var birthday=getBirthdayISO("e-birthday");
   if(!title||!fname||!lname||!phone||!birthday){
     showErr("editErr","กรุณากรอกข้อมูลให้ครบถ้วน"); return;
   }
@@ -659,7 +694,11 @@ App.saveEdit = function(){
 };
 
 // ── Start ────────────────────────────────────────────────────
-window.addEventListener("load", function() { App.start(); });
+window.addEventListener("load", function() {
+  attachDateMask("r-birthday");
+  attachDateMask("e-birthday");
+  App.start();
+});
 </script>
 </body>
 </html>
