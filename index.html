@@ -29,6 +29,7 @@ body{font-family:"Sarabun","Helvetica Neue",Arial,sans-serif;background:#f2f2f2;
 .row{display:flex;gap:12px}.row .field{flex:1}.row .field.narrow{flex:0 0 140px}
 label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:5px}
 label .en{font-weight:400;color:#aaa;font-size:12px}
+.en-sm{font-weight:400;opacity:.65;font-size:.72em}
 label .req{color:#cc0000;margin-left:2px}
 input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #ddd;border-radius:6px;background:#fff;color:#333;transition:border-color .15s}
 textarea{resize:vertical;min-height:72px}
@@ -109,7 +110,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
   <div class="page active" id="page-login">
     <div class="card">
       <div class="card-header">
-        <h1>ยินดีต้อนรับ / Welcome</h1>
+        <h1>ยินดีต้อนรับ <span class="en-sm">(Welcome)</span></h1>
         <p>กำลังตรวจสอบข้อมูล…</p>
       </div>
       <div class="card-body" style="text-align:center;padding:40px 28px">
@@ -131,7 +132,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
   <div class="page" id="page-register">
     <div class="card">
       <div class="card-header">
-        <h1>สมัครสมาชิก / Register</h1>
+        <h1>สมัครสมาชิก <span class="en-sm">(Register)</span></h1>
         <p>กรอกข้อมูลเพื่อสร้างบัญชีสมาชิก</p>
       </div>
       <div class="card-body">
@@ -142,15 +143,15 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
             <div style="font-size:11px;color:#888">เข้าสู่ระบบผ่าน LINE</div>
           </div>
         </div>
-        <p class="sec-title">ข้อมูลส่วนตัว / Personal info</p>
+        <p class="sec-title">ข้อมูลส่วนตัว <span class="en-sm">(Personal info)</span></p>
         <div class="row">
           <div class="field narrow">
-            <label>Title<span class="req">*</span></label>
+            <label>คำนำหน้า<span class="req">*</span></label>
             <select id="r-title">
-              <option value="">-- Select --</option>
-              <option value="Mr.">Mr. (นาย)</option>
-              <option value="Ms.">Ms. (นางสาว)</option>
-              <option value="Mrs.">Mrs. (นาง)</option>
+              <option value="">-- เลือก --</option>
+              <option value="Mr.">นาย (Mr.)</option>
+              <option value="Ms.">นางสาว (Ms.)</option>
+              <option value="Mrs.">นาง (Mrs.)</option>
             </select>
           </div>
           <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
@@ -161,7 +162,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
           <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
         </div>
         <!-- ★ Address section removed — a fixed default address is now submitted automatically -->
-        <p class="sec-title">รถคันแรก / First vehicle</p>
+        <p class="sec-title">รถคันแรก <span class="en-sm">(First vehicle)</span></p>
         <div class="row">
           <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
             <select id="r-carbrand" onchange="App.onCarBrandChange('r-carbrand','r-carmodel','r-brand-other-wrap','r-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
@@ -174,7 +175,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
         <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
         <div class="err-msg" id="regErr"></div>
-        <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก / Register</span></button>
+        <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก <span class="en-sm">(Register)</span></span></button>
       </div>
     </div>
   </div>
@@ -182,7 +183,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
   <!-- MEMBER PAGE -->
   <div class="page" id="page-member">
     <div class="card">
-      <div class="card-header"><h1>หน้าสมาชิก / My Profile</h1><p>ข้อมูลสมาชิกและ QR code ของคุณ</p></div>
+      <div class="card-header"><h1>หน้าสมาชิก <span class="en-sm">(My Profile)</span></h1><p>ข้อมูลสมาชิกและ QR code ของคุณ</p></div>
       <div class="card-body">
         <div class="member-header">
           <div class="avatar" id="m-avatar">--</div>
@@ -194,7 +195,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
           <div class="qr-hint">แสดง QR code นี้ให้เจ้าหน้าที่สแกนเพื่อลงทะเบียนรับประกัน</div>
         </div>
         <div class="car-section-hdr">
-          <div class="car-section-ttl">รถของฉัน / My vehicles</div>
+          <div class="car-section-ttl">รถของฉัน <span class="en-sm">(My vehicles)</span></div>
           <button class="btn-add-car" onclick="App.openAddCar()">+ เพิ่มรถ</button>
         </div>
         <div class="swiper-outer" id="swiperOuter"><div class="swiper-track" id="swiperTrack"></div></div>
@@ -208,7 +209,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
           </dl>
         </div>
         <div class="member-actions">
-          <button class="action-btn action-btn-edit" onclick="App.openEdit()">✏️ แก้ไขข้อมูล / Edit profile</button>
+          <button class="action-btn action-btn-edit" onclick="App.openEdit()">✏️ แก้ไขข้อมูล <span class="en-sm">(Edit profile)</span></button>
         </div>
       </div>
     </div>
@@ -217,13 +218,13 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
   <!-- EDIT PAGE -->
   <div class="page" id="page-edit">
     <div class="card">
-      <div class="card-header"><h1>แก้ไขข้อมูล / Edit Profile</h1><p>แก้ไขข้อมูลส่วนตัว</p></div>
+      <div class="card-header"><h1>แก้ไขข้อมูล <span class="en-sm">(Edit Profile)</span></h1><p>แก้ไขข้อมูลส่วนตัว</p></div>
       <div class="card-body">
-        <button class="btn-back" onclick="App.showPage('page-member')">← กลับ / Back</button>
-        <p class="sec-title">ข้อมูลส่วนตัว / Personal info</p>
+        <button class="btn-back" onclick="App.showPage('page-member')">← กลับ <span class="en-sm">(Back)</span></button>
+        <p class="sec-title">ข้อมูลส่วนตัว <span class="en-sm">(Personal info)</span></p>
         <div class="row">
           <div class="field narrow"><label>Title<span class="req">*</span></label>
-            <select id="e-title"><option value="">-- Select --</option><option value="Mr.">Mr. (นาย)</option><option value="Ms.">Ms. (นางสาว)</option><option value="Mrs.">Mrs. (นาง)</option></select>
+            <select id="e-title"><option value="">-- เลือก --</option><option value="Mr.">นาย (Mr.)</option><option value="Ms.">นางสาว (Ms.)</option><option value="Mrs.">นาง (Mrs.)</option></select>
           </div>
           <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="e-fname"></div>
         </div>
@@ -235,7 +236,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <!-- ★ Address section removed — fixed default address stays unchanged on edit -->
         <div class="err-msg" id="editErr"></div>
         <div id="editOk" style="display:none;font-size:13px;color:#1e7e34;margin-top:8px;text-align:center">✓ บันทึกเรียบร้อยแล้ว</div>
-        <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล / Save</span></button>
+        <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล <span class="en-sm">(Save)</span></span></button>
       </div>
     </div>
   </div>
@@ -245,7 +246,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 <div class="modal-backdrop" id="addCarModal">
   <div class="modal">
     <button class="modal-close" onclick="App.closeAddCar()">×</button>
-    <h3>เพิ่มรถ / Add vehicle</h3>
+    <h3>เพิ่มรถ <span class="en-sm">(Add vehicle)</span></h3>
     <p class="modal-sub">เพิ่มรถคันใหม่เข้าในโปรไฟล์</p>
     <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
       <select id="m-carbrand" onchange="App.onCarBrandChange('m-carbrand','m-carmodel','m-brand-other-wrap','m-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
@@ -257,7 +258,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
     <div class="field" id="m-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="m-carmodel-other"></div>
     <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="m-license" placeholder="เช่น กข 1234"></div>
     <div class="err-msg" id="addCarErr"></div>
-    <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก / Save</span></button>
+    <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก <span class="en-sm">(Save)</span></span></button>
     <button class="btn btn-ghost" onclick="App.closeAddCar()" style="margin-top:8px">ยกเลิก / Cancel</button>
   </div>
 </div>
@@ -533,7 +534,7 @@ App.showRegisterPage = function() {
   _populateRegions();
   // Warn if dropdown data didn't load
   if (!_carData.length) {
-    showErr("regErr","ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ / Data not loaded, please wait and retry");
+    showErr("regErr","ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
     setTimeout(function() {
       // Retry loading missing data
       apiGet({action:"getCarData"}).then(function(r){
@@ -581,12 +582,12 @@ App.submitRegister = function() {
     carbrand:carbrand,carmodel:carmodel,license:license
   }})
   .then(function(res){
-    setLoading("regBtn","regLabel",false,"สมัครสมาชิก / Register");
+    setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>");
     if(!res.success){ showErr("regErr",res.error==="duplicate_line"?"บัญชี LINE นี้มีสมาชิกอยู่แล้ว":"เกิดข้อผิดพลาด: "+res.error); return; }
     _member=res.member; _cars=res.cars;
     App.showMemberPage();
   })
-  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก / Register"); showErr("regErr","Error: "+(err.message||err)); });
+  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>"); showErr("regErr","Error: "+(err.message||err)); });
 };
 
 // ── Member page ──────────────────────────────────────────────
@@ -691,12 +692,12 @@ App.submitAddCar = function(){
   setLoading("addCarBtn","addCarLabel",true,"");
   apiGet({action:"addCar",memberId:_member.id,carbrand:carbrand,carmodel:carmodel,license:license})
     .then(function(res){
-      setLoading("addCarBtn","addCarLabel",false,"บันทึก / Save");
+      setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");
       if(!res.success){showErr("addCarErr",res.error==="duplicate_plate"?"ทะเบียนนี้มีในระบบแล้ว":"Error: "+res.error);return;}
       _cars.push(res.car); _carIdx=_cars.length-1;
       App.closeAddCar(); _renderSwiper();
     })
-    .catch(function(err){setLoading("addCarBtn","addCarLabel",false,"บันทึก / Save");showErr("addCarErr","Error: "+(err.message||err));});
+    .catch(function(err){setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");showErr("addCarErr","Error: "+(err.message||err));});
 };
 
 // ── Delete car ───────────────────────────────────────────────
@@ -746,7 +747,7 @@ App.saveEdit = function(){
   //   stays whatever was already saved (fixed default for new signups).
   apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday}})
     .then(function(res){
-      setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล / Save");
+      setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล <span class=\"en-sm\">(Save)</span>");
       if(!res.success){showErr("editErr","เกิดข้อผิดพลาด: "+res.error);return;}
       _member.title=title;_member.firstname=fname;_member.lastname=lname;
       _member.phone=phone;_member.birthday=birthday;
@@ -754,7 +755,7 @@ App.saveEdit = function(){
       document.getElementById("editOk").style.display="block";
       setTimeout(function(){document.getElementById("editOk").style.display="none";},3000);
     })
-    .catch(function(err){setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล / Save");showErr("editErr","Error: "+(err.message||err));});
+    .catch(function(err){setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล <span class=\"en-sm\">(Save)</span>");showErr("editErr","Error: "+(err.message||err));});
 };
 
 // ── Start ────────────────────────────────────────────────────
