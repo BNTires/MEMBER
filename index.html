@@ -601,6 +601,13 @@ App.showMemberPage = function() {
   document.getElementById("mi-birthday").textContent = fmtBirthday(_member.birthday);
   _carIdx=0; _renderSwiper();
   App.showPage("page-member");
+
+  // ★ Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
+  //   "+ เพิ่มรถ" button), jump straight into the Add Car modal.
+  var params = new URLSearchParams(window.location.search);
+  if (params.get("action") === "addcar") {
+    App.openAddCar();
+  }
 };
 
 App.updateMemberInfo = function(m) {
