@@ -148,9 +148,9 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
             <label>Title<span class="req">*</span></label>
             <select id="r-title">
               <option value="">-- Select --</option>
-              <option value="Mr.">Mr.</option>
-              <option value="Ms.">Ms.</option>
-              <option value="Mrs.">Mrs.</option>
+              <option value="Mr.">Mr. (นาย)</option>
+              <option value="Ms.">Ms. (นางสาว)</option>
+              <option value="Mrs.">Mrs. (นาง)</option>
             </select>
           </div>
           <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
@@ -223,7 +223,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <p class="sec-title">ข้อมูลส่วนตัว / Personal info</p>
         <div class="row">
           <div class="field narrow"><label>Title<span class="req">*</span></label>
-            <select id="e-title"><option value="">-- Select --</option><option value="Mr.">Mr.</option><option value="Ms.">Ms.</option><option value="Mrs.">Mrs.</option></select>
+            <select id="e-title"><option value="">-- Select --</option><option value="Mr.">Mr. (นาย)</option><option value="Ms.">Ms. (นางสาว)</option><option value="Mrs.">Mrs. (นาง)</option></select>
           </div>
           <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="e-fname"></div>
         </div>
@@ -353,39 +353,94 @@ function resetSel(id,ph){
   var o=document.createElement("option"); o.value=""; o.textContent=ph; s.appendChild(o);
 }
 
-// ── ★ Birthday mask: user types digits only, auto-formats as __/__/____ ──
+// ── ★ Birthday mask: fixed __/__/____ template — slashes never move,
+//    underscores get replaced by typed digits, cursor auto-skips slashes ──
+var DATE_MASK = "__/__/____";
+var DATE_DIGIT_POS = [0,1,3,4,6,7,8,9]; // indices in the mask that hold digits
+
 function attachDateMask(inputId) {
   var el = document.getElementById(inputId);
   if (!el) return;
-  el.addEventListener("input", function() {
-    var digits = el.value.replace(/\D/g, "").slice(0, 8);
-    var out = digits.slice(0, 2);
-    if (digits.length > 2) out += "/" + digits.slice(2, 4);
-    if (digits.length > 4) out += "/" + digits.slice(4, 8);
-    el.value = out;
+  if (!el.value) el.value = DATE_MASK;
+
+  el.addEventListener("focus", function() {
+    if (!el.value) el.value = DATE_MASK;
+    var pos = DATE_DIGIT_POS[0];
+    setTimeout(function(){ el.setSelectionRange(pos, pos); }, 0);
+  });
+
+  el.addEventListener("click", function() {
+    var pos = el.selectionStart;
+    var nearest = DATE_DIGIT_POS.reduce(function(a,b){
+      return Math.abs(b-pos) < Math.abs(a-pos) ? b : a;
+    });
+    el.setSelectionRange(nearest, nearest);
+  });
+
+  el.addEventListener("keydown", function(e) {
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      var pos = el.selectionStart;
+      var chars = el.value.split("");
+      for (var i = pos - 1; i >= 0; i--) {
+        if (DATE_DIGIT_POS.indexOf(i) !== -1) {
+          chars[i] = "_";
+          el.value = chars.join("");
+          el.setSelectionRange(i, i);
+          break;
+        }
+      }
+      return;
+    }
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Tab") return;
+    if (!/^[0-9]$/.test(e.key)) { e.preventDefault(); return; }
+    e.preventDefault();
+    var pos = el.selectionStart;
+    var validPositions = DATE_DIGIT_POS.filter(function(p){ return p >= pos; });
+    if (!validPositions.length) return;
+    var idx = validPositions[0];
+    var chars = el.value.split("");
+    chars[idx] = e.key;
+    el.value = chars.join("");
+    var nextPositions = DATE_DIGIT_POS.filter(function(p){ return p > idx; });
+    var nextPos = nextPositions.length ? nextPositions[0] : idx + 1;
+    el.setSelectionRange(nextPos, nextPos);
   });
 }
 
-// ── ★ Reads the DD/MM/YYYY masked input, auto-converts Buddhist Era (พ.ศ.)
-//    to Gregorian/Worldwide (ค.ศ.) if the year looks like a BE year (>2400),
-//    and returns a normal ISO "YYYY-MM-DD" string for storage. ──
-function getBirthdayISO(inputId) {
-  var raw = (document.getElementById(inputId).value || "").replace(/\D/g, "");
-  if (raw.length < 8) return "";
-  var day   = parseInt(raw.slice(0, 2), 10);
-  var month = parseInt(raw.slice(2, 4), 10);
-  var year  = parseInt(raw.slice(4, 8), 10);
+// ── ★ Validates + parses the masked input. Returns:
+//    { empty:true }                      — nothing typed
+//    { empty:false, valid:false }        — typed but not a real date
+//    { empty:false, valid:true, iso:"YYYY-MM-DD" } — good, converted from
+//      Buddhist Era to Gregorian automatically if year > 2400 ──
+function parseBirthdayInput(inputId) {
+  var val = document.getElementById(inputId).value || "";
+  if (!val || val === DATE_MASK) return { empty: true };
+  if (val.indexOf("_") !== -1) return { empty: false, valid: false };
+
+  var digits = val.replace(/\D/g, "");
+  if (digits.length !== 8) return { empty: false, valid: false };
+
+  var day   = parseInt(digits.slice(0, 2), 10);
+  var month = parseInt(digits.slice(2, 4), 10);
+  var year  = parseInt(digits.slice(4, 8), 10);
   if (year > 2400) year -= 543; // Buddhist Era → Gregorian
+
+  if (month < 1 || month > 12) return { empty: false, valid: false };
+  var daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) return { empty: false, valid: false };
+  if (year < 1900 || year > new Date().getFullYear()) return { empty: false, valid: false };
+
   var mm = String(month).padStart(2, "0");
   var dd = String(day).padStart(2, "0");
-  return year + "-" + mm + "-" + dd;
+  return { empty: false, valid: true, iso: year + "-" + mm + "-" + dd };
 }
 
-// ── ★ Converts a stored ISO date back into DD/MM/YYYY for display in the mask input ──
+// ── ★ Converts a stored ISO date back into the DD/MM/YYYY mask for display ──
 function isoToDisplayDate(iso) {
-  if (!iso) return "";
+  if (!iso) return DATE_MASK;
   var parts = String(iso).split("-");
-  if (parts.length !== 3) return "";
+  if (parts.length !== 3) return DATE_MASK;
   return parts[2].slice(0, 2) + "/" + parts[1] + "/" + parts[0];
 }
 
@@ -495,12 +550,17 @@ App.submitRegister = function() {
   var fname=document.getElementById("r-fname").value.trim();
   var lname=document.getElementById("r-lname").value.trim();
   var phone=document.getElementById("r-phone").value.trim();
-  var birthday=getBirthdayISO("r-birthday");
+  var bd=parseBirthdayInput("r-birthday");
   var license=document.getElementById("r-license").value.trim();
   var carbrand=document.getElementById("r-carbrand").value;
   var carmodel=document.getElementById("r-carmodel").value;
   if(carbrand==="__other__") carbrand=document.getElementById("r-carbrand-other").value.trim();
   if(carmodel==="__other__") carmodel=document.getElementById("r-carmodel-other").value.trim();
+
+  if(!bd.empty && !bd.valid){
+    showErr("regErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
+  }
+  var birthday = bd.valid ? bd.iso : "";
 
   if(!title||!fname||!lname||!phone||!birthday||!license||!carbrand||!carmodel){
     var missing=[];
@@ -673,7 +733,11 @@ App.saveEdit = function(){
   var fname=document.getElementById("e-fname").value.trim();
   var lname=document.getElementById("e-lname").value.trim();
   var phone=document.getElementById("e-phone").value.trim();
-  var birthday=getBirthdayISO("e-birthday");
+  var bd=parseBirthdayInput("e-birthday");
+  if(!bd.empty && !bd.valid){
+    showErr("editErr","วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวัน/เดือน/ปี (DD/MM/YYYY)"); return;
+  }
+  var birthday = bd.valid ? bd.iso : "";
   if(!title||!fname||!lname||!phone||!birthday){
     showErr("editErr","กรุณากรอกข้อมูลให้ครบถ้วน"); return;
   }
