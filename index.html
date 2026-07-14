@@ -476,6 +476,11 @@ App.start = function() {
       var carRes    = results[1];
 
       if (carRes.success && carRes.brands)  _carData    = carRes.brands;
+      _populateRegions(); // ★ FIX: always populate brand dropdowns (both r-carbrand
+                           //   and m-carbrand) here, not just when going to Register —
+                           //   previously this only ran in showRegisterPage(), so
+                           //   returning members who go straight to showMemberPage()
+                           //   never had the Add Car modal's dropdown populated.
 
       if (memberRes.exists) {
         _member = memberRes.member;
@@ -583,7 +588,13 @@ App.submitRegister = function() {
   }})
   .then(function(res){
     setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>");
-    if(!res.success){ showErr("regErr",res.error==="duplicate_line"?"บัญชี LINE นี้มีสมาชิกอยู่แล้ว":"เกิดข้อผิดพลาด: "+res.error); return; }
+    if(!res.success){
+      var msg = "เกิดข้อผิดพลาด: "+res.error;
+      if(res.error==="duplicate_line")   msg = "บัญชี LINE นี้มีสมาชิกอยู่แล้ว";
+      if(res.error==="duplicate_phone")  msg = "เบอร์โทรนี้มีสมาชิกอยู่แล้วในระบบ";
+      if(res.error==="duplicate_plate")  msg = "ทะเบียนรถนี้มีอยู่ในระบบแล้ว กรุณาตรวจสอบ";
+      showErr("regErr",msg); return;
+    }
     _member=res.member; _cars=res.cars;
     App.showMemberPage();
   })
