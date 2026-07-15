@@ -50,7 +50,8 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 .dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{40%{opacity:1}}
 /* Member page */
-.member-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.member-header{margin-bottom:20px}
+.m-name{border-bottom:2px solid #cc0000;padding-bottom:6px;display:inline-block}
 .avatar{width:52px;height:52px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
 .m-name{font-size:17px;font-weight:700;color:#222}
 .qr-box{background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:20px;text-align:center;margin-bottom:20px}
@@ -60,9 +61,11 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 .car-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .car-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px}
 .btn-add-car{background:none;border:1px solid #cc0000;border-radius:20px;color:#cc0000;font-size:12px;font-weight:700;padding:4px 12px;cursor:pointer;font-family:inherit}
-.swiper-outer{overflow:hidden;margin-bottom:4px;touch-action:pan-y}
-.swiper-track{display:flex;transition:transform .3s ease}
-.car-card{min-width:100%;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:16px 18px;flex-shrink:0}
+.swiper-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;margin-bottom:6px;padding-bottom:4px}
+.swiper-outer::-webkit-scrollbar{display:none}
+.swiper-track{display:flex;gap:10px}
+.car-card{min-width:85%;scroll-snap-align:start;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:16px 18px;flex-shrink:0}
+.swipe-hint{font-size:11px;color:#aaa;text-align:center;margin-bottom:12px}
 .car-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
 .car-make{font-size:16px;font-weight:700;color:#222}
 .car-model-txt{font-size:13px;color:#888;margin-top:1px}
@@ -186,8 +189,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
       <div class="card-header"><h1>หน้าสมาชิก <span class="en-sm">(My Profile)</span></h1><p>ข้อมูลสมาชิกและ QR code ของคุณ</p></div>
       <div class="card-body">
         <div class="member-header">
-          <div class="avatar" id="m-avatar">--</div>
-          <div><div class="m-name" id="m-fullname"></div></div>
+          <div class="m-name" id="m-fullname"></div>
         </div>
         <div class="qr-box">
           <div class="qr-car-label" id="qr-car-label">กรุณาเลือกรถ</div>
@@ -210,6 +212,7 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         </div>
         <div class="member-actions">
           <button class="action-btn action-btn-edit" onclick="App.openEdit()">✏️ แก้ไขข้อมูล <span class="en-sm">(Edit profile)</span></button>
+          <button class="action-btn action-btn-edit" onclick="App.openEditCar()">🚗 แก้ไขรถ <span class="en-sm">(Edit car)</span></button>
         </div>
       </div>
     </div>
@@ -260,6 +263,21 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
     <div class="err-msg" id="addCarErr"></div>
     <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก <span class="en-sm">(Save)</span></span></button>
     <button class="btn btn-ghost" onclick="App.closeAddCar()" style="margin-top:8px">ยกเลิก / Cancel</button>
+  </div>
+</div>
+
+<!-- Edit car modal — shows the currently-viewed car, delete requires this deliberate step -->
+<div class="modal-backdrop" id="editCarModal">
+  <div class="modal">
+    <button class="modal-close" onclick="App.closeEditCar()">×</button>
+    <h3>แก้ไขรถ <span class="en-sm">(Edit car)</span></h3>
+    <p class="modal-sub">ข้อมูลรถคันนี้</p>
+    <div class="member-card" style="margin-bottom:16px">
+      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="ec-car"></span></div>
+      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="ec-plate"></span></div>
+    </div>
+    <button class="btn btn-outline" style="border-color:#cc0000;color:#cc0000" onclick="App.askDeleteCurrent()">🗑 ลบรถคันนี้ <span class="en-sm">(Delete this car)</span></button>
+    <button class="btn btn-ghost" onclick="App.closeEditCar()" style="margin-top:8px">ปิด / Close</button>
   </div>
 </div>
 
@@ -340,6 +358,15 @@ App.showPage = function(id) {
 function showErr(id,msg){ var e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
 function hideErr(id){ document.getElementById(id).style.display="none"; }
 function fmtPhone(p){ p=String(p||"").replace(/\D/g,""); return p.length===10?p.slice(0,3)+"-"+p.slice(3,6)+"-"+p.slice(6):p; }
+
+// ── Convert stored English title (Mr./Ms./Mrs.) to Thai for display ──
+function thaiTitle(title) {
+  title = String(title || "").trim();
+  if (title === "Mr.")  return "นาย";
+  if (title === "Ms.")  return "นางสาว";
+  if (title === "Mrs.") return "นาง";
+  return title; // fallback: show whatever was stored (e.g. old Thai-titled members)
+}
 function fmtBirthday(v){
   if(!v) return "—";
   try{ var d=new Date(v); return d.toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}); }
@@ -603,9 +630,7 @@ App.submitRegister = function() {
 
 // ── Member page ──────────────────────────────────────────────
 App.showMemberPage = function() {
-  var full=_member.title+" "+_member.firstname+" "+_member.lastname;
-  var ini=((_member.firstname||"?")[0]+(_member.lastname||"?")[0]).toUpperCase();
-  document.getElementById("m-avatar").textContent   = ini;
+  var full=thaiTitle(_member.title)+" "+_member.firstname+" "+_member.lastname;
   document.getElementById("m-fullname").textContent  = full;
   document.getElementById("mi-name").textContent     = full;
   document.getElementById("mi-phone").textContent    = fmtPhone(_member.phone);
@@ -623,9 +648,7 @@ App.showMemberPage = function() {
 
 App.updateMemberInfo = function(m) {
   _member=m;
-  var full=m.title+" "+m.firstname+" "+m.lastname;
-  var ini=((m.firstname||"?")[0]+(m.lastname||"?")[0]).toUpperCase();
-  document.getElementById("m-avatar").textContent   = ini;
+  var full=thaiTitle(m.title)+" "+m.firstname+" "+m.lastname;
   document.getElementById("m-fullname").textContent  = full;
   document.getElementById("mi-name").textContent     = full;
   document.getElementById("mi-phone").textContent    = fmtPhone(m.phone);
@@ -643,36 +666,69 @@ function _renderSwiper() {
   }
   _cars.forEach(function(car,idx){
     var card=document.createElement("div"); card.className="car-card";
-    card.innerHTML='<div class="car-card-top"><div><div class="car-make">'+car.carbrand+'</div><div class="car-model-txt">'+car.carmodel+'</div></div>'+
-      '<button class="btn-del-car" onclick="App.askDelete(\''+car.id+'\',\''+car.carbrand+' '+car.carmodel+'\')">×</button></div>'+
+    card.innerHTML='<div class="car-card-top"><div><div class="car-make">'+car.carbrand+'</div><div class="car-model-txt">'+car.carmodel+'</div></div></div>'+
       '<span class="car-plate">'+car.license+'</span>';
     track.appendChild(card);
     var dot=document.createElement("button"); dot.className="car-dot"+(idx===_carIdx?" active":"");
     dot.onclick=(function(i){return function(){_goTo(i);};})(idx);
     dots.appendChild(dot);
   });
+  // ★ Swipe hint — only shown when there's more than one car, since a
+  //   single card obviously doesn't need to scroll
+  var hintId = "swipe-hint-el";
+  var existingHint = document.getElementById(hintId);
+  if (existingHint) existingHint.remove();
+  if (_cars.length > 1) {
+    var hint = document.createElement("div");
+    hint.id = hintId;
+    hint.className = "swipe-hint";
+    hint.textContent = "← เลื่อนดูรถคันอื่น →";
+    track.parentNode.insertAdjacentElement("afterend", hint);
+  }
   _goTo(_carIdx,false); _initSwipe();
 }
 
 function _goTo(idx,animate) {
   if(idx<0)idx=0; if(idx>=_cars.length)idx=_cars.length-1;
   _carIdx=idx;
-  var track=document.getElementById("swiperTrack");
-  track.style.transition=animate===false?"none":"transform .3s ease";
-  track.style.transform="translateX(-"+(idx*100)+"%)";
+  var outer = document.getElementById("swiperOuter");
+  var track = document.getElementById("swiperTrack");
+  var target = track.children[idx];
+  if (target) {
+    outer.scrollTo({ left: target.offsetLeft - 4, behavior: animate===false ? "auto" : "smooth" });
+  }
   document.querySelectorAll(".car-dot").forEach(function(d,i){d.classList.toggle("active",i===idx);});
   var car=_cars[idx];
   document.getElementById("qr-car-label").textContent=car.carbrand+" "+car.carmodel+" · "+car.license;
   _generateQR(car);
 }
 
+// ── Native scroll: detect which card the user landed on after swiping,
+//    and keep dots/QR in sync ──
 function _initSwipe(){
-  var outer=document.getElementById("swiperOuter"),sx=0,dragging=false;
-  outer.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;},{passive:true});
-  outer.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40){dx<0?_goTo(_carIdx+1):_goTo(_carIdx-1);}});
-  outer.addEventListener("mousedown",function(e){dragging=true;sx=e.clientX;});
-  outer.addEventListener("mouseup",function(e){if(!dragging)return;dragging=false;var dx=e.clientX-sx;if(Math.abs(dx)>40){dx<0?_goTo(_carIdx+1):_goTo(_carIdx-1);}});
-  outer.addEventListener("mouseleave",function(){dragging=false;});
+  var outer=document.getElementById("swiperOuter");
+  var scrollTimeout;
+  outer.onscroll = function(){
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function(){
+      var track=document.getElementById("swiperTrack");
+      var scrollLeft=outer.scrollLeft;
+      var closestIdx=0, closestDist=Infinity;
+      Array.prototype.forEach.call(track.children, function(child,i){
+        var dist=Math.abs(child.offsetLeft-scrollLeft);
+        if(dist<closestDist){closestDist=dist;closestIdx=i;}
+      });
+      if(closestIdx!==_carIdx){
+        _carIdx=closestIdx;
+        document.querySelectorAll(".car-dot").forEach(function(d,i){d.classList.toggle("active",i===closestIdx);});
+        var car=_cars[closestIdx];
+        if(car){
+          document.getElementById("qr-car-label").textContent=car.carbrand+" "+car.carmodel+" · "+car.license;
+          _generateQR(car);
+        }
+      }
+    },120);
+  };
 }
 
 function _generateQR(car){
@@ -728,7 +784,23 @@ App.closeConfirm = function(){ document.getElementById("confirmModal").classList
 App.confirmDelete = function(){
   if(!_delCarId)return; var id=_delCarId; App.closeConfirm();
   apiGet({action:"deleteCar",carId:id,memberId:_member.id})
-    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderSwiper();}});
+    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderSwiper();App.closeEditCar();}});
+};
+
+// ── Edit Car — shows the currently-viewed car; delete requires opening
+//   this modal first (no more one-tap × on the card itself) ──
+App.openEditCar = function(){
+  if (!_cars.length) return;
+  var car = _cars[_carIdx];
+  document.getElementById("ec-car").textContent   = car.carbrand + " " + car.carmodel;
+  document.getElementById("ec-plate").textContent = car.license;
+  document.getElementById("editCarModal").classList.add("open");
+};
+App.closeEditCar = function(){ document.getElementById("editCarModal").classList.remove("open"); };
+App.askDeleteCurrent = function(){
+  if (!_cars.length) return;
+  var car = _cars[_carIdx];
+  App.askDelete(car.id, car.carbrand + " " + car.carmodel);
 };
 
 // ── Edit ─────────────────────────────────────────────────────
