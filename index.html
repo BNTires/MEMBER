@@ -783,5 +783,20 @@ window.addEventListener("load", function() {
   App.start();
 });
 </script>
+
+<script>
+// ── Auto-clear caches/service workers on every load, so code updates
+//    always take effect instead of serving a stale cached version ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  });
+}
+if ('caches' in window) {
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); });
+  });
+}
+</script>
 </body>
 </html>
