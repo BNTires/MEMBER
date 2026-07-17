@@ -288,7 +288,13 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
       <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="ec-car"></span></div>
       <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="ec-plate"></span></div>
     </div>
-    <button class="btn btn-outline" style="border-color:#cc0000;color:#cc0000" onclick="App.askDeleteCurrent()">🗑 ลบรถคันนี้ <span class="en-sm">(Delete this car)</span></button>
+    <div class="field">
+      <label>สีรถ</label>
+      <div class="color-picker" id="ec-color-picker"></div>
+    </div>
+    <div class="err-msg" id="ecColorErr"></div>
+    <button class="btn btn-red" id="ecSaveColorBtn" onclick="App.saveCarColor()"><span id="ecSaveColorLabel">💾 บันทึกสี <span class="en-sm">(Save color)</span></span></button>
+    <button class="btn btn-outline" style="border-color:#cc0000;color:#cc0000;margin-top:8px" onclick="App.askDeleteCurrent()">🗑 ลบรถคันนี้ <span class="en-sm">(Delete this car)</span></button>
     <button class="btn btn-ghost" onclick="App.closeEditCar()" style="margin-top:8px">ปิด / Close</button>
   </div>
 </div>
@@ -408,6 +414,14 @@ function renderColorPicker(prefix){
 function carColorName(hex){
   var found = CAR_COLORS.filter(function(c){ return c.hex.toLowerCase() === String(hex||"").toLowerCase(); })[0];
   return found ? found.name : "";
+}
+
+// ── Browsers normalize inline style.background to rgb(...) when read back —
+//    convert that back to hex so it can be compared against stored hex values ──
+function rgbToHex(rgb){
+  var m = String(rgb||"").match(/\d+/g);
+  if (!m || m.length < 3) return rgb;
+  return "#" + m.slice(0,3).map(function(n){ return ("0"+parseInt(n,10).toString(16)).slice(-2); }).join("").toUpperCase();
 }
 
 // ── Convert stored English title (Mr./Ms./Mrs.) to Thai for display ──
@@ -719,9 +733,9 @@ function _renderSwiper() {
   }
   _cars.forEach(function(car,idx){
     var card=document.createElement("div"); card.className="car-card";
-    var colorDot = car.carColor ? '<span class="car-color-dot" style="background:'+car.carColor+'" title="'+carColorName(car.carColor)+'"></span>' : '';
+    if (car.carColor) card.style.background = car.carColor;
     card.innerHTML='<div class="car-card-top"><div><div class="car-make">'+car.carbrand+'</div><div class="car-model-txt">'+car.carmodel+'</div></div></div>'+
-      '<span class="car-plate">'+colorDot+car.license+'</span>';
+      '<span class="car-plate">'+car.license+'</span>';
     track.appendChild(card);
     var dot=document.createElement("button"); dot.className="car-dot"+(idx===_carIdx?" active":"");
     dot.onclick=(function(i){return function(){_goTo(i);};})(idx);
@@ -850,6 +864,16 @@ App.openEditCar = function(){
   var car = _cars[_carIdx];
   document.getElementById("ec-car").textContent   = car.carbrand + " " + car.carmodel;
   document.getElementById("ec-plate").textContent = car.license;
+  renderColorPicker("ec");
+  _selectedColor.ec = car.carColor || "";
+  if (car.carColor) {
+    document.querySelectorAll("#ec-color-picker .color-swatch").forEach(function(sw){
+      if (sw.style.background && rgbToHex(sw.style.background).toLowerCase() === car.carColor.toLowerCase()) {
+        sw.classList.add("selected");
+      }
+    });
+  }
+  hideErr("ecColorErr");
   document.getElementById("editCarModal").classList.add("open");
 };
 App.closeEditCar = function(){ document.getElementById("editCarModal").classList.remove("open"); };
@@ -857,6 +881,25 @@ App.askDeleteCurrent = function(){
   if (!_cars.length) return;
   var car = _cars[_carIdx];
   App.askDelete(car.id, car.carbrand + " " + car.carmodel);
+};
+App.saveCarColor = function(){
+  if (!_cars.length) return;
+  hideErr("ecColorErr");
+  var car = _cars[_carIdx];
+  var color = _selectedColor.ec || "";
+  setLoading("ecSaveColorBtn","ecSaveColorLabel",true,"");
+  apiGet({action:"updateCarColor",carId:car.id,memberId:_member.id,carColor:color})
+    .then(function(res){
+      setLoading("ecSaveColorBtn","ecSaveColorLabel",false,'💾 บันทึกสี <span class="en-sm">(Save color)</span>');
+      if(!res.success){ showErr("ecColorErr","บันทึกไม่สำเร็จ: "+(res.error||"")); return; }
+      car.carColor = color;
+      _renderSwiper();
+      App.closeEditCar();
+    })
+    .catch(function(err){
+      setLoading("ecSaveColorBtn","ecSaveColorLabel",false,'💾 บันทึกสี <span class="en-sm">(Save color)</span>');
+      showErr("ecColorErr","Error: "+(err.message||err));
+    });
 };
 
 // ── Edit ─────────────────────────────────────────────────────
