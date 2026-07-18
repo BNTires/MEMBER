@@ -207,7 +207,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         </div>
         <div class="car-section-hdr">
           <div class="car-section-ttl">รถของฉัน <span class="en-sm">(My vehicles)</span></div>
-          <button class="btn-add-car" onclick="App.openAddCar()">+ เพิ่มรถ</button>
         </div>
         <div class="swiper-outer" id="swiperOuter"><div class="swiper-track" id="swiperTrack"></div></div>
         <div class="car-dots" id="carDots"></div>
@@ -221,7 +220,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         </div>
         <div class="member-actions">
           <button class="action-btn action-btn-edit" onclick="App.openEdit()">✏️ แก้ไขข้อมูล <span class="en-sm">(Edit profile)</span></button>
-          <button class="action-btn action-btn-edit" onclick="App.openEditCar()">🚗 แก้ไขรถ <span class="en-sm">(Edit car)</span></button>
         </div>
       </div>
     </div>
@@ -726,7 +724,7 @@ function _renderSwiper() {
   var track=document.getElementById("swiperTrack"),dots=document.getElementById("carDots");
   track.innerHTML=""; dots.innerHTML="";
   if(!_cars.length){
-    track.innerHTML='<div class="no-cars">ยังไม่มีรถ กด "+ เพิ่มรถ" เพื่อเพิ่มรถคันแรก</div>';
+    track.innerHTML='<div class="no-cars">ยังไม่มีรถในระบบ — กรุณาติดต่อร้านเพื่อเพิ่มรถของคุณ</div>';
     document.getElementById("qr-car-label").textContent="ยังไม่มีรถ";
     _clearQR(); return;
   }
