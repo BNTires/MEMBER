@@ -193,9 +193,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <div class="field" id="r-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="r-carbrand-other"></div>
         <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
         <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
-        <div class="field"><label>สีรถ</label>
-          <div class="color-picker" id="r-color-picker"></div>
-        </div>
         <div class="err-msg" id="regErr"></div>
         <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก <span class="en-sm">(Register)</span></span></button>
       </div>
@@ -284,34 +281,13 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
     <div class="field" id="m-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="m-carbrand-other"></div>
     <div class="field" id="m-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="m-carmodel-other"></div>
     <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="m-license" placeholder="เช่น กข 1234"></div>
-    <div class="field"><label>สีรถ</label>
-      <div class="color-picker" id="m-color-picker"></div>
-    </div>
     <div class="err-msg" id="addCarErr"></div>
     <button class="btn btn-red" id="addCarBtn" onclick="App.submitAddCar()" style="margin-top:4px"><span id="addCarLabel">บันทึก <span class="en-sm">(Save)</span></span></button>
     <button class="btn btn-ghost" onclick="App.closeAddCar()" style="margin-top:8px">ยกเลิก / Cancel</button>
   </div>
 </div>
 
-<!-- Edit car modal — shows the currently-viewed car, delete requires this deliberate step -->
-<div class="modal-backdrop" id="editCarModal">
-  <div class="modal">
-    <button class="modal-close" onclick="App.closeEditCar()">×</button>
-    <h3>แก้ไขรถ <span class="en-sm">(Edit car)</span></h3>
-    <p class="modal-sub" style="margin-bottom:20px">ข้อมูลรถคันนี้</p>
-    <div class="member-card" style="margin-bottom:16px">
-      <div class="info-row"><span class="info-label">ยี่ห้อ/รุ่น</span><span class="info-value" id="ec-car"></span></div>
-      <div class="info-row"><span class="info-label">ทะเบียน</span><span class="info-value" id="ec-plate"></span></div>
-    </div>
-    <div class="field">
-      <label>สีรถ</label>
-      <div class="color-picker" id="ec-color-picker"></div>
-    </div>
-    <div class="err-msg" id="ecColorErr"></div>
-    <button class="btn btn-red" id="ecSaveColorBtn" onclick="App.saveCarColor()"><span id="ecSaveColorLabel">💾 บันทึกสี <span class="en-sm">(Save color)</span></span></button>
-    <button class="btn btn-ghost" onclick="App.closeEditCar()" style="margin-top:8px">ปิด / Close</button>
-  </div>
-</div>
+
 
 <!-- Confirm delete modal -->
 <div class="modal-backdrop" id="confirmModal">
@@ -390,53 +366,6 @@ App.showPage = function(id) {
 function showErr(id,msg){ var e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
 function hideErr(id){ document.getElementById(id).style.display="none"; }
 function fmtPhone(p){ p=String(p||"").replace(/\D/g,""); return p.length===10?p.slice(0,3)+"-"+p.slice(3,6)+"-"+p.slice(6):p; }
-
-// ── Car color palette (pastel tones, contrast-checked text per swatch) ──
-var CAR_COLORS = [
-  { name:"ขาว",     hex:"#FFFFFF", text:"#2d2d2d", white:true },
-  { name:"เงิน",    hex:"#D9D9D9", text:"#2d2d2d" },
-  { name:"เทาเข้ม", hex:"#9E9E9E", text:"#1a1a1a" },
-  { name:"แดง",     hex:"#F4A6A6", text:"#5a1a1a" },
-  { name:"ฟ้า",     hex:"#A8C8E8", text:"#1a2d4a" },
-  { name:"เขียว",   hex:"#A8D8B9", text:"#1a3d28" },
-  { name:"ทอง",     hex:"#E8D5A8", text:"#4a3d1a" },
-  { name:"น้ำตาล",  hex:"#C4A484", text:"#3a2d1a" }
-];
-var _selectedColor = { "r": "", "m": "" }; // selected hex per form prefix
-
-function renderColorPicker(prefix){
-  var el = document.getElementById(prefix+"-color-picker");
-  if (!el) return;
-  el.innerHTML = "";
-  CAR_COLORS.forEach(function(c){
-    var sw = document.createElement("div");
-    sw.className = "color-swatch" + (c.white ? " white-swatch" : "");
-    sw.style.background = c.hex;
-    sw.style.color = c.text;
-    sw.textContent = c.name;
-    sw.title = c.name;
-    sw.addEventListener("click", function(){
-      _selectedColor[prefix] = c.hex;
-      el.querySelectorAll(".color-swatch").forEach(function(s){ s.classList.remove("selected"); });
-      sw.classList.add("selected");
-    });
-    el.appendChild(sw);
-  });
-}
-
-// ── Converts a stored hex color into its Thai name label, for display on car cards ──
-function carColorName(hex){
-  var found = CAR_COLORS.filter(function(c){ return c.hex.toLowerCase() === String(hex||"").toLowerCase(); })[0];
-  return found ? found.name : "";
-}
-
-// ── Browsers normalize inline style.background to rgb(...) when read back —
-//    convert that back to hex so it can be compared against stored hex values ──
-function rgbToHex(rgb){
-  var m = String(rgb||"").match(/\d+/g);
-  if (!m || m.length < 3) return rgb;
-  return "#" + m.slice(0,3).map(function(n){ return ("0"+parseInt(n,10).toString(16)).slice(-2); }).join("").toUpperCase();
-}
 
 // ── Convert stored English title (Mr./Ms./Mrs.) to Thai for display ──
 function thaiTitle(title) {
@@ -701,8 +630,6 @@ App.showRegisterPage = function() {
     document.getElementById("line-profile-bar").style.display="flex";
   }
   _populateRegions();
-  renderColorPicker("r");
-  _selectedColor.r = "";
   document.getElementById("r-brand-logo").style.display="none"; // ★ NEW
   // Warn if dropdown data didn't load
   if (!_carData.length) {
@@ -751,7 +678,7 @@ App.submitRegister = function() {
     // ★ Fixed default address — no longer typed by the customer
     address:FIXED_ADDRESS,region:FIXED_REGION,province:FIXED_PROVINCE,district:FIXED_DISTRICT,
     subdistrict:FIXED_SUBDISTRICT,zipcode:FIXED_ZIP,
-    carbrand:carbrand,carmodel:carmodel,license:license,carColor:_selectedColor.r||""
+    carbrand:carbrand,carmodel:carmodel,license:license
   }})
   .then(function(res){
     setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>");
@@ -901,8 +828,6 @@ App.openAddCar = function(){
   resetSel("m-carmodel","-- เลือกยี่ห้อก่อน --");
   document.getElementById("m-carmodel").disabled=true;
   document.getElementById("m-license").value="";
-  renderColorPicker("m");
-  _selectedColor.m = "";
   document.getElementById("m-brand-other-wrap").style.display="none";
   document.getElementById("m-model-other-wrap").style.display="none";
   document.getElementById("m-brand-logo").style.display="none"; // ★ NEW
@@ -928,7 +853,7 @@ App.submitAddCar = function(){
   if(carmodel==="__other__") carmodel=document.getElementById("m-carmodel-other").value.trim();
   if(!carbrand||!carmodel||!license){showErr("addCarErr","กรุณากรอกข้อมูลให้ครบ");return;}
   setLoading("addCarBtn","addCarLabel",true,"");
-  apiGet({action:"addCar",memberId:_member.id,carbrand:carbrand,carmodel:carmodel,license:license,carColor:_selectedColor.m||""})
+  apiGet({action:"addCar",memberId:_member.id,carbrand:carbrand,carmodel:carmodel,license:license})
     .then(function(res){
       setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");
       if(!res.success){showErr("addCarErr",res.error==="duplicate_plate"?"ทะเบียนนี้มีในระบบแล้ว":"Error: "+res.error);return;}
