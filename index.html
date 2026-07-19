@@ -543,7 +543,7 @@ App.start = function() {
         apiGet({ action:"checkLineUser", lineUserId:profile.userId })
           .catch(function(){ return { exists:false, error:"checkLineUser failed" }; }),
         apiGet({ action:"getCarData" })
-          .catch(function(){ return { success:false, brands:[] }; })
+          .catch(function(err){ return { success:false, brands:[], error:"เชื่อมต่อไม่ได้: "+(err.message||err) }; }) // ★ FIXED — used to swallow the real error
       ]);
     })
     .then(function(results) {
