@@ -104,12 +104,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 .confirm-box h3{font-size:16px;font-weight:700;margin-bottom:8px}
 .confirm-box p{font-size:13px;color:#666;margin-bottom:20px;line-height:1.6}
 .confirm-actions{display:flex;gap:10px}
-.color-picker{display:flex;flex-wrap:wrap;gap:8px}
-.color-swatch{width:44px;height:44px;border-radius:10px;border:2px solid transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;text-align:center;line-height:1.2;-webkit-tap-highlight-color:transparent}
-.color-swatch.selected{border-color:#cc0000;box-shadow:0 0 0 2px rgba(204,0,0,.15)}
-.color-swatch.white-swatch{border-color:#ddd}
-.color-swatch.selected.white-swatch{border-color:#cc0000}
-.car-color-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid rgba(255,255,255,.5)}
 </style>
 </head>
 <body>
@@ -325,6 +319,7 @@ var _delCarId    = null;
 var _lineProfile = null;
 var _clientData  = null;
 var _carData     = [];
+var _carDataError = ""; // ★ NEW — last error from getCarData, shown to staff/customer instead of a generic message
 
 // ── API helpers ──────────────────────────────────────────────
 function apiGet(params, retries) {
@@ -556,6 +551,7 @@ App.start = function() {
       var carRes    = results[1];
 
       if (carRes.success && carRes.brands)  _carData    = carRes.brands;
+      else                                   _carDataError = carRes.error || ""; // ★ NEW
       _populateRegions(); // ★ FIX: always populate brand dropdowns (both r-carbrand
                            //   and m-carbrand) here, not just when going to Register —
                            //   previously this only ran in showRegisterPage(), so
@@ -631,13 +627,16 @@ App.showRegisterPage = function() {
   }
   _populateRegions();
   document.getElementById("r-brand-logo").style.display="none"; // ★ NEW
-  // Warn if dropdown data didn't load
+  // Warn if dropdown data didn't load — show the real backend error (which
+  // now includes diagnostic info like actual sheet names found) instead of
+  // a generic message, so this is actually debuggable.
   if (!_carData.length) {
-    showErr("regErr","ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
+    showErr("regErr", _carDataError || "ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
     setTimeout(function() {
       // Retry loading missing data
       apiGet({action:"getCarData"}).then(function(r){
         if(r.success && r.brands && r.brands.length){ _carData=r.brands; _populateRegions(); hideErr("regErr"); }
+        else { _carDataError = r.error || _carDataError; showErr("regErr", _carDataError || "โหลดไม่สำเร็จ"); }
       });
     }, 1500);
   }
@@ -835,9 +834,10 @@ App.openAddCar = function(){
   // ★ NEW: warn (and retry) if brand/model dropdown data never loaded,
   //   instead of silently showing an empty dropdown with no explanation
   if (!_carData.length) {
-    showErr("addCarErr","ข้อมูลยี่ห้อรถโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
+    showErr("addCarErr", _carDataError || "ข้อมูลยี่ห้อรถโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
     apiGet({action:"getCarData"}).then(function(r){
       if(r.success && r.brands && r.brands.length){ _carData=r.brands; _populateRegions(); hideErr("addCarErr"); }
+      else { _carDataError = r.error || _carDataError; showErr("addCarErr", _carDataError || "โหลดไม่สำเร็จ"); }
     });
   }
   document.getElementById("addCarModal").classList.add("open");
@@ -873,52 +873,7 @@ App.closeConfirm = function(){ document.getElementById("confirmModal").classList
 App.confirmDelete = function(){
   if(!_delCarId)return; var id=_delCarId; App.closeConfirm();
   apiGet({action:"deleteCar",carId:id,memberId:_member.id})
-    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderSwiper();App.closeEditCar();}});
-};
-
-// ── Edit Car — shows the currently-viewed car; delete requires opening
-//   this modal first (no more one-tap × on the card itself) ──
-App.openEditCar = function(){
-  if (!_cars.length) return;
-  var car = _cars[_carIdx];
-  document.getElementById("ec-car").textContent   = car.carbrand + " " + car.carmodel;
-  document.getElementById("ec-plate").textContent = car.license;
-  renderColorPicker("ec");
-  _selectedColor.ec = car.carColor || "";
-  if (car.carColor) {
-    document.querySelectorAll("#ec-color-picker .color-swatch").forEach(function(sw){
-      if (sw.style.background && rgbToHex(sw.style.background).toLowerCase() === car.carColor.toLowerCase()) {
-        sw.classList.add("selected");
-      }
-    });
-  }
-  hideErr("ecColorErr");
-  document.getElementById("editCarModal").classList.add("open");
-};
-App.closeEditCar = function(){ document.getElementById("editCarModal").classList.remove("open"); };
-App.askDeleteCurrent = function(){
-  if (!_cars.length) return;
-  var car = _cars[_carIdx];
-  App.askDelete(car.id, car.carbrand + " " + car.carmodel);
-};
-App.saveCarColor = function(){
-  if (!_cars.length) return;
-  hideErr("ecColorErr");
-  var car = _cars[_carIdx];
-  var color = _selectedColor.ec || "";
-  setLoading("ecSaveColorBtn","ecSaveColorLabel",true,"");
-  apiGet({action:"updateCarColor",carId:car.id,memberId:_member.id,carColor:color})
-    .then(function(res){
-      setLoading("ecSaveColorBtn","ecSaveColorLabel",false,'💾 บันทึกสี <span class="en-sm">(Save color)</span>');
-      if(!res.success){ showErr("ecColorErr","บันทึกไม่สำเร็จ: "+(res.error||"")); return; }
-      car.carColor = color;
-      _renderSwiper();
-      App.closeEditCar();
-    })
-    .catch(function(err){
-      setLoading("ecSaveColorBtn","ecSaveColorLabel",false,'💾 บันทึกสี <span class="en-sm">(Save color)</span>');
-      showErr("ecColorErr","Error: "+(err.message||err));
-    });
+    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderSwiper();}});
 };
 
 // ── Edit ─────────────────────────────────────────────────────
