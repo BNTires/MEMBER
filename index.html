@@ -710,7 +710,7 @@ App.showRegisterPage = function() {
     setTimeout(function() {
       // Retry loading missing data
       apiGet({action:"getCarData"}).then(function(r){
-        if(r.success){ _carData=r.brands; _populateRegions(); hideErr("regErr"); }
+        if(r.success && r.brands && r.brands.length){ _carData=r.brands; _populateRegions(); hideErr("regErr"); }
       });
     }, 1500);
   }
@@ -907,6 +907,14 @@ App.openAddCar = function(){
   document.getElementById("m-model-other-wrap").style.display="none";
   document.getElementById("m-brand-logo").style.display="none"; // ★ NEW
   hideErr("addCarErr");
+  // ★ NEW: warn (and retry) if brand/model dropdown data never loaded,
+  //   instead of silently showing an empty dropdown with no explanation
+  if (!_carData.length) {
+    showErr("addCarErr","ข้อมูลยี่ห้อรถโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
+    apiGet({action:"getCarData"}).then(function(r){
+      if(r.success && r.brands && r.brands.length){ _carData=r.brands; _populateRegions(); hideErr("addCarErr"); }
+    });
+  }
   document.getElementById("addCarModal").classList.add("open");
 };
 App.closeAddCar = function(){ document.getElementById("addCarModal").classList.remove("open"); };
