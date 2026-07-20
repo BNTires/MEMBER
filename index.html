@@ -64,12 +64,13 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 .swiper-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;margin-bottom:6px;padding-bottom:4px}
 .swiper-outer::-webkit-scrollbar{display:none}
 .swiper-track{display:flex;gap:10px}
-.car-card{min-width:85%;scroll-snap-align:start;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:16px 18px;flex-shrink:0}
+.car-card{min-width:85%;scroll-snap-align:start;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:12px 16px;flex-shrink:0;display:flex;align-items:center;gap:12px}
 .swipe-hint{font-size:11px;color:#aaa;text-align:center;margin-bottom:12px}
-.car-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
-.car-make{font-size:16px;font-weight:700;color:#222}
-.car-model-txt{font-size:13px;color:#888;margin-top:1px}
-.car-plate{display:inline-block;background:#222;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px}
+.car-card-logo{width:40px;height:40px;object-fit:contain;background:white;border-radius:8px;padding:3px;border:1px solid rgba(0,0,0,.08);flex-shrink:0}
+.car-card-info{flex:1;min-width:0;display:flex;align-items:baseline;gap:6px;overflow:hidden}
+.car-make{font-size:15px;font-weight:700;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.car-model-txt{font-size:13px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.car-plate{display:inline-block;background:#222;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
 .btn-del-car{background:none;border:none;cursor:pointer;color:#ddd;font-size:20px;line-height:1;padding:2px 4px}
 .btn-del-car:hover{color:#cc0000}
 .car-dots{display:flex;justify-content:center;gap:6px;margin-bottom:16px}
@@ -749,15 +750,17 @@ function _renderSwiper() {
   }
   _cars.forEach(function(car,idx){
     var card=document.createElement("div"); card.className="car-card";
-    if (car.carColor) card.style.background = car.carColor;
-    var logo = _carBrandLogo(car.carbrand); // ★ NEW — redesigned car card with brand logo
+    var logo = _carBrandLogo(car.carbrand);
     var logoHtml = logo
-      ? '<img src="'+logo+'" alt="" style="width:40px;height:40px;object-fit:contain;background:white;border-radius:8px;padding:3px;border:1px solid rgba(0,0,0,.08);flex-shrink:0" onerror="this.style.display=\'none\'">'
+      ? '<img src="'+logo+'" alt="" class="car-card-logo" onerror="this.style.display=\'none\'">'
       : '';
+    // ★ Redesigned: single row — logo | brand | model | plate.
+    //   Color background removed (CarColor column being retired).
     card.innerHTML=
-      '<div class="car-card-top" style="align-items:center;gap:10px">'+
-        logoHtml+
-        '<div><div class="car-make">'+car.carbrand+'</div><div class="car-model-txt">'+car.carmodel+'</div></div>'+
+      logoHtml+
+      '<div class="car-card-info">'+
+        '<span class="car-make">'+car.carbrand+'</span>'+
+        '<span class="car-model-txt">'+car.carmodel+'</span>'+
       '</div>'+
       '<span class="car-plate">'+car.license+'</span>';
     track.appendChild(card);
