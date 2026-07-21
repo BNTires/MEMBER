@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tyre Warranty Portal — ระบบสมาชิก</title>
+<title>B.N.Tires&amp;Max Member Page</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -50,41 +50,39 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 .dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{40%{opacity:1}}
 /* Member page */
-.member-header{margin-bottom:20px}
-.m-name{border-bottom:2px solid #cc0000;padding-bottom:6px;display:inline-block}
 .avatar{width:52px;height:52px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
-.m-name{font-size:17px;font-weight:700;color:#222}
-.qr-box{background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:20px;text-align:center;margin-bottom:20px}
-.qr-box canvas{border-radius:6px;margin:0 auto 8px;display:block}
-.qr-car-label{font-size:12px;font-weight:700;color:#cc0000;margin-bottom:8px}
-.qr-hint{font-size:12px;color:#aaa;line-height:1.6}
-.car-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.car-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px}
-.btn-add-car{background:none;border:1px solid #cc0000;border-radius:20px;color:#cc0000;font-size:12px;font-weight:700;padding:4px 12px;cursor:pointer;font-family:inherit}
-.swiper-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;margin-bottom:6px;padding-bottom:4px}
-.swiper-outer::-webkit-scrollbar{display:none}
-.swiper-track{display:flex;gap:10px}
-.car-card{min-width:85%;scroll-snap-align:start;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:12px 16px;flex-shrink:0;display:flex;align-items:center;gap:12px}
-.swipe-hint{font-size:11px;color:#aaa;text-align:center;margin-bottom:12px}
+/* ── Member page redesign: full-bleed banner + name bar + tabbed body + bottom nav ── */
+.mem-header-banner{margin:-20px -20px 0 -20px;line-height:0}
+.mem-header-banner img{width:100%;display:block}
+.mem-name-bar{background:#f0f0f0;padding:16px 20px 12px;margin:0 -20px}
+.mem-name-bar .mem-name{font-size:19px;font-weight:700;color:#1a1a1a;display:inline-block;border-bottom:3px solid #cc0000;padding-bottom:4px}
+.mem-body-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:16px 0 100px;padding:24px 20px;min-height:300px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.qr-box{text-align:center}
+.qr-box canvas{border-radius:6px;margin:0 auto 10px;display:block}
+.qr-hint{font-size:12px;color:#aaa}
+.btn-outline{background:#fff;color:#cc0000;border:1.5px solid #cc0000;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit}
+.btn-outline:active{background:#fff5f5}
+.mem-bottom-nav{background:#cc0000;display:flex;justify-content:space-around;align-items:flex-end;padding:8px 8px 12px;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:520px;box-sizing:border-box;z-index:50}
+.nav-item{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff;font-size:10px;font-weight:700;flex:1;padding:4px;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.nav-item .nav-icon-wrap{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.nav-item svg{width:22px;height:22px;stroke:#1a1a1a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-item.active{transform:translateY(-18px)}
+.nav-item.active .nav-icon-wrap{width:56px;height:56px;background:#fff;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.3);margin-bottom:2px}
+.nav-item.active svg{width:28px;height:28px;stroke:#cc0000;stroke-width:2.2}
+.car-card{background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
 .car-card-logo{width:40px;height:40px;object-fit:contain;background:white;border-radius:8px;padding:3px;border:1px solid rgba(0,0,0,.08);flex-shrink:0}
 .car-card-info{flex:1;min-width:0;display:flex;align-items:baseline;gap:6px;overflow:hidden}
 .car-make{font-size:15px;font-weight:700;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .car-model-txt{font-size:13px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .car-plate{display:inline-block;background:#222;color:#fff;font-size:13px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
-.btn-del-car{background:none;border:none;cursor:pointer;color:#ddd;font-size:20px;line-height:1;padding:2px 4px}
-.btn-del-car:hover{color:#cc0000}
-.car-dots{display:flex;justify-content:center;gap:6px;margin-bottom:16px}
-.car-dot{width:7px;height:7px;border-radius:50%;background:#ddd;border:none;cursor:pointer;padding:0;transition:background .2s}
-.car-dot.active{background:#cc0000}
-.no-cars{text-align:center;padding:24px;color:#aaa;font-size:14px;background:#f8f8f8;border:1px solid #eee;border-radius:10px;margin-bottom:16px}
+.no-cars{text-align:center;padding:24px;color:#aaa;font-size:14px;background:#f8f8f8;border:1px solid #eee;border-radius:10px}
 .info-section{margin-bottom:18px}
 .info-section-ttl{font-size:11px;font-weight:700;color:#cc0000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:14px}
 .info-grid dt{color:#888}.info-grid dd{color:#222;font-weight:600}
-.member-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
-.action-btn{background:none;border:none;cursor:pointer;font-size:13px;color:#aaa;font-family:inherit;display:flex;align-items:center;gap:4px;padding:0}
-.action-btn:hover,.action-btn-edit{color:#cc0000}
-/* ★ NEW: Vehicle history */
+/* ── Vehicle history ── */
 .hist-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
 .hist-row:last-child{border-bottom:none}
 .hist-row.hist-head{font-weight:700;color:#888;font-size:11px;text-transform:uppercase}
@@ -114,8 +112,8 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
     </div>
     <div>
-      <div class="logo-text-main">Tyre Warranty Portal</div>
-      <div class="logo-text-sub">ระบบสมาชิกรับประกันยาง</div>
+      <div class="logo-text-main">B.N.Tires&amp;Max</div>
+      <div class="logo-text-sub">Member Page</div>
     </div>
   </div>
 
@@ -195,52 +193,73 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
     </div>
   </div>
 
-  <!-- MEMBER PAGE -->
+  <!-- MEMBER PAGE — redesigned: header banner + name + 3 tabs (QR / Car / Personal) + bottom nav -->
   <div class="page" id="page-member">
-    <div class="card">
-      <div class="card-header"><h1>หน้าสมาชิก <span class="en-sm">(My Profile)</span></h1><p>ข้อมูลสมาชิกและ QR code ของคุณ</p></div>
-      <div class="card-body">
-        <div class="member-header">
-          <div class="m-name" id="m-fullname"></div>
-        </div>
+    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
+    <div class="mem-name-bar"><div class="mem-name" id="m-fullname"></div></div>
+
+    <div class="mem-body-card">
+      <!-- Tab: QR -->
+      <div class="tab-panel active" id="tab-qr">
         <div class="qr-box">
-          <div class="qr-car-label" id="qr-car-label">QR สมาชิกของฉัน</div>
-          <canvas id="qrCanvas" width="180" height="180"></canvas>
-          <div class="qr-hint">แสดง QR code นี้ให้เจ้าหน้าที่สแกน — ระบบจะให้เจ้าหน้าที่เลือกรถของคุณเองในขั้นตอนถัดไป</div>
+          <canvas id="qrCanvas" width="200" height="200"></canvas>
+          <div class="qr-hint">แสดง QR code นี้ให้เจ้าหน้าที่สแกน</div>
         </div>
-        <div class="car-section-hdr">
-          <div class="car-section-ttl">รถของฉัน <span class="en-sm">(My vehicles)</span></div>
-        </div>
-        <div class="swiper-outer" id="swiperOuter"><div class="swiper-track" id="swiperTrack"></div></div>
-        <div class="car-dots" id="carDots"></div>
-        <!-- ★ NEW: Vehicle history section for the currently-viewed car -->
-        <div class="info-section" id="history-section" style="margin-top:8px">
-          <div class="info-section-ttl">ประวัติรถ <span class="en-sm">(Vehicle history)</span></div>
+      </div>
+
+      <!-- Tab: Car -->
+      <div class="tab-panel" id="tab-car">
+        <div id="car-selected-summary"></div>
+        <button class="btn-outline" id="select-car-btn" onclick="App.openCarSelect()">เลือกรถ</button>
+        <div class="info-section" id="history-section" style="margin-top:20px">
+          <div class="info-section-ttl">ประวัติ</div>
           <div class="hist-tire-info" id="history-tire-info"></div>
           <div id="history-table-wrap"></div>
         </div>
-        <div class="info-section" style="margin-top:8px">
-          <div class="info-section-ttl">ข้อมูลส่วนตัว</div>
-          <dl class="info-grid">
-            <dt>ชื่อ-นามสกุล</dt><dd id="mi-name"></dd>
-            <dt>เบอร์โทร</dt><dd id="mi-phone"></dd>
-            <dt>วันเกิด</dt><dd id="mi-birthday"></dd>
-          </dl>
-        </div>
-        <div class="member-actions">
-          <button class="action-btn action-btn-edit" onclick="App.openEdit()">✏️ แก้ไขข้อมูล <span class="en-sm">(Edit profile)</span></button>
-        </div>
       </div>
+
+      <!-- Tab: Personal Info -->
+      <div class="tab-panel" id="tab-personal">
+        <dl class="info-grid">
+          <dt>ชื่อ-นามสกุล</dt><dd id="mi-name"></dd>
+          <dt>เบอร์โทร</dt><dd id="mi-phone"></dd>
+          <dt>วันเกิด</dt><dd id="mi-birthday"></dd>
+        </dl>
+        <button class="btn-outline" style="margin-top:16px" onclick="App.openEdit()">✏️ แก้ไขข้อมูล</button>
+      </div>
+    </div>
+
+    <div class="mem-bottom-nav">
+      <button class="nav-item active" id="nav-tab-qr" onclick="App.switchTab('tab-qr')">
+        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14.5" y="14.5" width="2.5" height="2.5"/><rect x="18" y="14.5" width="2.5" height="2.5"/><rect x="14.5" y="18" width="2.5" height="2.5"/><rect x="18" y="18" width="2.5" height="2.5"/></svg></div>
+        <span>สมาชิก</span>
+      </button>
+      <button class="nav-item" id="nav-tab-car" onclick="App.switchTab('tab-car')">
+        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M3 13l1.4-4.3A2 2 0 0 1 6.3 7.3h11.4a2 2 0 0 1 1.9 1.4L21 13"/><path d="M3 13h18v3.5a1.2 1.2 0 0 1-1.2 1.2H19a1.2 1.2 0 0 1-1.2-1.2V16H6.2v.5A1.2 1.2 0 0 1 5 17.7H4.2A1.2 1.2 0 0 1 3 16.5V13z"/><circle cx="7" cy="15" r="1"/><circle cx="17" cy="15" r="1"/></svg></div>
+        <span>รถยนต์</span>
+      </button>
+      <button class="nav-item" id="nav-tab-personal" onclick="App.switchTab('tab-personal')">
+        <div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5 15.5c0-1.6 1.6-2.8 3.5-2.8s3.5 1.2 3.5 2.8"/><line x1="14" y1="9.5" x2="18" y2="9.5"/><line x1="14" y1="13" x2="18" y2="13"/></svg></div>
+        <span>ข้อมูลส่วนตัว</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Car select modal (★ NEW — replaces the old swipe-to-browse design) -->
+  <div class="modal-backdrop" id="carSelectModal">
+    <div class="modal">
+      <button class="modal-close" onclick="App.closeCarSelect()">×</button>
+      <h3>เลือกรถ</h3>
+      <div id="car-select-list"></div>
     </div>
   </div>
 
   <!-- EDIT PAGE -->
   <div class="page" id="page-edit">
     <div class="card">
-      <div class="card-header"><h1>แก้ไขข้อมูล <span class="en-sm">(Edit Profile)</span></h1><p>แก้ไขข้อมูลส่วนตัว</p></div>
+      <div class="card-header"><h1>แก้ไขข้อมูล</h1></div>
       <div class="card-body">
-        <button class="btn-back" onclick="App.showPage('page-member')">← กลับ <span class="en-sm">(Back)</span></button>
-        <p class="sec-title">ข้อมูลส่วนตัว <span class="en-sm">(Personal info)</span></p>
+        <button class="btn-back" onclick="App.showPage('page-member')">← กลับ</button>
         <div class="row">
           <div class="field narrow"><label>Title<span class="req">*</span></label>
             <select id="e-title"><option value="">-- เลือก --</option><option value="Mr.">นาย (Mr.)</option><option value="Ms.">นางสาว (Ms.)</option><option value="Mrs.">นาง (Mrs.)</option></select>
@@ -252,10 +271,9 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
           <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="e-phone" maxlength="10"></div>
           <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="e-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
         </div>
-        <!-- ★ Address section removed — fixed default address stays unchanged on edit -->
         <div class="err-msg" id="editErr"></div>
         <div id="editOk" style="display:none;font-size:13px;color:#1e7e34;margin-top:8px;text-align:center">✓ บันทึกเรียบร้อยแล้ว</div>
-        <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล <span class="en-sm">(Save)</span></span></button>
+        <button class="btn btn-red" id="saveEditBtn" onclick="App.saveEdit()" style="margin-top:12px"><span id="saveEditLabel">บันทึกข้อมูล</span></button>
       </div>
     </div>
   </div>
@@ -357,6 +375,8 @@ var App = {};
 App.showPage = function(id) {
   document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
   document.getElementById(id).classList.add("active");
+  var logoBar = document.querySelector(".logo-bar");
+  if (logoBar) logoBar.style.display = (id === "page-member") ? "none" : "flex";
   window.scrollTo(0,0);
 };
 
@@ -718,12 +738,14 @@ App.showMemberPage = function() {
   document.getElementById("mi-name").textContent     = full;
   document.getElementById("mi-phone").textContent    = fmtPhone(_member.phone);
   document.getElementById("mi-birthday").textContent = fmtBirthday(_member.birthday);
-  _generateMemberQR(); // ★ NEW — one QR per member, not per car
-  _carIdx=0; _renderSwiper();
+  _generateMemberQR(); // one QR per member, not per car
+  _carIdx=0;
+  App.switchTab("tab-qr"); // always land on the QR tab first
+  _renderCarTab();
   App.showPage("page-member");
 
-  // ★ Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
-  //   "+ เพิ่มรถ" button), jump straight into the Add Car modal.
+  // Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
+  // "+ เพิ่มรถ" button), jump straight into the Add Car modal.
   var params = new URLSearchParams(window.location.search);
   if (params.get("action") === "addcar") {
     App.openAddCar();
@@ -739,106 +761,84 @@ App.updateMemberInfo = function(m) {
   document.getElementById("mi-birthday").textContent = fmtBirthday(m.birthday);
 };
 
-// ── Car swiper ───────────────────────────────────────────────
-function _renderSwiper() {
-  var track=document.getElementById("swiperTrack"),dots=document.getElementById("carDots");
-  track.innerHTML=""; dots.innerHTML="";
+// ── ★ NEW: Tab switching (QR / Car / Personal Info) ───────────
+App.switchTab = function(tabId){
+  document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.toggle("active", p.id===tabId); });
+  document.querySelectorAll(".nav-item").forEach(function(n){ n.classList.toggle("active", n.id==="nav-"+tabId); });
+};
+
+// ── ★ NEW: Car tab — shows the currently-selected car's summary +
+//    history, with a "เลือกรถ" button opening the picker modal
+//    (replaces the old swipe-to-browse design). ──
+function _renderCarTab(){
+  var summaryEl = document.getElementById("car-selected-summary");
+  var selectBtn = document.getElementById("select-car-btn");
   if(!_cars.length){
-    track.innerHTML='<div class="no-cars">ยังไม่มีรถในระบบ — กรุณาติดต่อร้านเพื่อเพิ่มรถของคุณ</div>';
-    _renderHistory(null); // ★ NEW — QR stays showing (member-level, not car-level)
+    summaryEl.innerHTML = '<div class="no-cars">ยังไม่มีรถในระบบ — กรุณาติดต่อร้านเพื่อเพิ่มรถของคุณ</div>';
+    selectBtn.style.display = "none";
+    _renderHistory(null);
     return;
   }
-  _cars.forEach(function(car,idx){
-    var card=document.createElement("div"); card.className="car-card";
-    var logo = _carBrandLogo(car.carbrand);
-    var logoHtml = logo
-      ? '<img src="'+logo+'" alt="" class="car-card-logo" onerror="this.style.display=\'none\'">'
-      : '';
-    // ★ Redesigned: single row — logo | brand | model | plate.
-    //   Color background removed (CarColor column being retired).
-    card.innerHTML=
-      logoHtml+
-      '<div class="car-card-info">'+
-        '<span class="car-make">'+car.carbrand+'</span>'+
-        '<span class="car-model-txt">'+car.carmodel+'</span>'+
-      '</div>'+
-      '<span class="car-plate">'+car.license+'</span>';
-    track.appendChild(card);
-    var dot=document.createElement("button"); dot.className="car-dot"+(idx===_carIdx?" active":"");
-    dot.onclick=(function(i){return function(){_goTo(i);};})(idx);
-    dots.appendChild(dot);
-  });
-  // ★ Swipe hint — only shown when there's more than one car, since a
-  //   single card obviously doesn't need to scroll
-  var hintId = "swipe-hint-el";
-  var existingHint = document.getElementById(hintId);
-  if (existingHint) existingHint.remove();
-  if (_cars.length > 1) {
-    var hint = document.createElement("div");
-    hint.id = hintId;
-    hint.className = "swipe-hint";
-    hint.textContent = "← เลื่อนดูรถคันอื่น →";
-    track.parentNode.insertAdjacentElement("afterend", hint);
-  }
-  _goTo(_carIdx,false); _initSwipe();
+  selectBtn.style.display = "block";
+  if(_carIdx<0 || _carIdx>=_cars.length) _carIdx = 0;
+  var car = _cars[_carIdx];
+  summaryEl.innerHTML = _carCardHtml(car);
+  _renderHistory(car);
 }
 
-function _goTo(idx,animate) {
-  if(idx<0)idx=0; if(idx>=_cars.length)idx=_cars.length-1;
-  _carIdx=idx;
-  var outer = document.getElementById("swiperOuter");
-  var track = document.getElementById("swiperTrack");
-  var target = track.children[idx];
-  if (target) {
-    outer.scrollTo({ left: target.offsetLeft - 4, behavior: animate===false ? "auto" : "smooth" });
-  }
-  document.querySelectorAll(".car-dot").forEach(function(d,i){d.classList.toggle("active",i===idx);});
-  var car=_cars[idx];
-  _renderHistory(car); // ★ NEW — QR label/canvas no longer changes per car
+// ── Shared markup for a single car row (logo | brand | model | plate) —
+//    used by both the car tab's summary and the select-car modal list ──
+function _carCardHtml(car){
+  var logo = _carBrandLogo(car.carbrand);
+  var logoHtml = logo
+    ? '<img src="'+logo+'" alt="" class="car-card-logo" onerror="this.style.display=\'none\'">'
+    : '';
+  return '<div class="car-card">'+logoHtml+
+    '<div class="car-card-info">'+
+      '<span class="car-make">'+car.carbrand+'</span>'+
+      '<span class="car-model-txt">'+car.carmodel+'</span>'+
+    '</div>'+
+    '<span class="car-plate">'+car.license+'</span>'+
+  '</div>';
 }
 
-// ── Native scroll: detect which card the user landed on after swiping,
-//    and keep dots/QR in sync ──
-function _initSwipe(){
-  var outer=document.getElementById("swiperOuter");
-  var scrollTimeout;
-  outer.onscroll = function(){
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(function(){
-      var track=document.getElementById("swiperTrack");
-      var scrollLeft=outer.scrollLeft;
-      var closestIdx=0, closestDist=Infinity;
-      Array.prototype.forEach.call(track.children, function(child,i){
-        var dist=Math.abs(child.offsetLeft-scrollLeft);
-        if(dist<closestDist){closestDist=dist;closestIdx=i;}
+App.openCarSelect = function(){
+  var list = document.getElementById("car-select-list");
+  list.innerHTML = "";
+  if(!_cars.length){
+    list.innerHTML = '<div class="no-cars">ยังไม่มีรถในระบบ</div>';
+  } else {
+    _cars.forEach(function(car, idx){
+      var el = document.createElement("div");
+      el.style.cursor = "pointer";
+      el.style.marginBottom = "10px";
+      el.innerHTML = _carCardHtml(car);
+      el.addEventListener("click", function(){
+        _carIdx = idx;
+        App.closeCarSelect();
+        _renderCarTab();
       });
-      if(closestIdx!==_carIdx){
-        _carIdx=closestIdx;
-        document.querySelectorAll(".car-dot").forEach(function(d,i){d.classList.toggle("active",i===closestIdx);});
-        var car=_cars[closestIdx];
-        if(car){
-          _renderHistory(car); // ★ NEW — QR label/canvas no longer changes per car
-        }
-      }
-    },120);
-  };
-}
+      list.appendChild(el);
+    });
+  }
+  document.getElementById("carSelectModal").classList.add("open");
+};
+App.closeCarSelect = function(){ document.getElementById("carSelectModal").classList.remove("open"); };
 
-// ── ★ CHANGED: QR now encodes the MemberID only, not a specific car.
-//    Staff scan this once, then pick which of the member's cars applies
-//    on the scanner side — so this only needs to run once per member,
-//    not per car. ──
+// ── QR now encodes the MemberID only, not a specific car. Staff scan
+//    this once, then pick which of the member's cars applies on the
+//    scanner side — so this only needs to run once per member. ──
 function _generateMemberQR(){
   if (!_member || !_member.id) return;
   var canvas=document.getElementById("qrCanvas"),ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,180,180);
+  ctx.clearRect(0,0,200,200);
   if(typeof QRCode!=="undefined"){
     var tmp=document.createElement("div");
-    new QRCode(tmp,{text:_member.id,width:180,height:180,colorDark:"#000",colorLight:"#fff"});
-    setTimeout(function(){var img=tmp.querySelector("img")||tmp.querySelector("canvas");if(img){var i=new Image();i.onload=function(){ctx.drawImage(i,0,0,180,180);};i.src=img.src||img.toDataURL();}},150);
+    new QRCode(tmp,{text:_member.id,width:200,height:200,colorDark:"#000",colorLight:"#fff"});
+    setTimeout(function(){var img=tmp.querySelector("img")||tmp.querySelector("canvas");if(img){var i=new Image();i.onload=function(){ctx.drawImage(i,0,0,200,200);};i.src=img.src||img.toDataURL();}},150);
   }
 }
-function _clearQR(){var ctx=document.getElementById("qrCanvas").getContext("2d");ctx.fillStyle="#f0f0f0";ctx.fillRect(0,0,180,180);}
+function _clearQR(){var ctx=document.getElementById("qrCanvas").getContext("2d");ctx.fillStyle="#f0f0f0";ctx.fillRect(0,0,200,200);}
 
 // ── Add car ──────────────────────────────────────────────────
 App.openAddCar = function(){
@@ -877,7 +877,7 @@ App.submitAddCar = function(){
       setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");
       if(!res.success){showErr("addCarErr",res.error==="duplicate_plate"?"ทะเบียนนี้มีในระบบแล้ว":"Error: "+res.error);return;}
       _cars.push(res.car); _carIdx=_cars.length-1;
-      App.closeAddCar(); _renderSwiper();
+      App.closeAddCar(); _renderCarTab();
     })
     .catch(function(err){setLoading("addCarBtn","addCarLabel",false,"บันทึก <span class=\"en-sm\">(Save)</span>");showErr("addCarErr","Error: "+(err.message||err));});
 };
@@ -892,7 +892,7 @@ App.closeConfirm = function(){ document.getElementById("confirmModal").classList
 App.confirmDelete = function(){
   if(!_delCarId)return; var id=_delCarId; App.closeConfirm();
   apiGet({action:"deleteCar",carId:id,memberId:_member.id})
-    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderSwiper();}});
+    .then(function(res){if(res.success){_cars=_cars.filter(function(c){return c.id!==id;});if(_carIdx>=_cars.length)_carIdx=Math.max(0,_cars.length-1);_renderCarTab();}});
 };
 
 // ── Edit ─────────────────────────────────────────────────────
