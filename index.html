@@ -49,6 +49,8 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 .dots span{width:6px;height:6px;background:currentColor;border-radius:50%;opacity:.3;animation:blink 1s infinite}
 .dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{40%{opacity:1}}
+.progress-track{width:100%;max-width:280px;height:8px;background:#f0f0f0;border-radius:4px;margin:0 auto;overflow:hidden}
+.progress-fill{height:100%;width:8%;background:#cc0000;border-radius:4px;transition:width .4s ease}
 /* Member page */
 .avatar{width:52px;height:52px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
 /* ── Member page redesign: full-bleed banner + name bar + tabbed body + bottom nav ── */
@@ -123,8 +125,8 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
     <div class="mem-body-card" style="text-align:center;padding:48px 28px;margin-top:24px">
       <div id="login-loading">
         <div style="font-size:36px;margin-bottom:12px">🔍</div>
-        <div style="font-size:14px;color:#888" id="login-msg">กำลังเข้าสู่ระบบผ่าน LINE…</div>
-        <div style="margin-top:16px"><span class="dots" style="color:#aaa"><span></span><span></span><span></span></span></div>
+        <div style="font-size:14px;color:#888;margin-bottom:16px" id="login-msg">กำลังเข้าสู่ระบบผ่าน LINE…</div>
+        <div class="progress-track"><div class="progress-fill" id="login-progress-fill"></div></div>
       </div>
       <div id="login-error" style="display:none">
         <div style="font-size:32px;margin-bottom:10px">⚠️</div>
@@ -560,13 +562,16 @@ App.retryLogin = function() {
 
 App.start = function() {
   App.showPage("page-login"); // ensure logo-bar hides immediately (page-login has its own banner)
+  _setLoginProgress(8);
   document.getElementById("login-msg").textContent = "Step 1: กำลัง init LIFF…";
   liff.init({ liffId: LIFF_ID })
     .then(function() {
+      _setLoginProgress(35);
       document.getElementById("login-msg").textContent = "Step 2: กำลังดึงโปรไฟล์…";
       return liff.getProfile();
     })
     .then(function(profile) {
+      _setLoginProgress(65);
       document.getElementById("login-msg").textContent = "กำลังโหลดข้อมูล…";
       _lineProfile = profile;
 
@@ -579,6 +584,7 @@ App.start = function() {
       ]);
     })
     .then(function(results) {
+      _setLoginProgress(100);
       var memberRes = results[0];
       var carRes    = results[1];
 
@@ -604,6 +610,12 @@ App.start = function() {
       document.getElementById("login-error").style.display   = "block";
     });
 };
+
+function _setLoginProgress(pct){
+  var el = document.getElementById("login-progress-fill");
+  if (el) el.style.width = pct + "%";
+}
+
 
 // ── Populate car brand dropdowns ──────────────────────────────
 function _populateRegions() {
