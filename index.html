@@ -138,55 +138,49 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
 
   <!-- REGISTER PAGE -->
   <div class="page" id="page-register">
-    <div class="card">
-      <div class="card-header">
-        <h1>สมัครสมาชิก <span class="en-sm">(Register)</span></h1>
-        <p>กรอกข้อมูลเพื่อสร้างบัญชีสมาชิก</p>
+    <div class="mem-header-banner"><img src="header.jpg" alt="B.N. Tires &amp; Max"></div>
+    <div class="mem-body-card" style="margin-top:16px">
+      <p class="sec-title" style="margin-top:0">สมัครสมาชิก</p>
+      <div id="line-profile-bar" style="display:none;align-items:center;gap:12px;background:#f0f9f0;border:1px solid #c3e6cb;border-radius:8px;padding:12px 14px;margin-bottom:20px">
+        <img id="line-avatar" src="" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1e7e34" id="line-display-name"></div>
+          <div style="font-size:11px;color:#888">เข้าสู่ระบบผ่าน LINE</div>
+        </div>
       </div>
-      <div class="card-body">
-        <div id="line-profile-bar" style="display:none;align-items:center;gap:12px;background:#f0f9f0;border:1px solid #c3e6cb;border-radius:8px;padding:12px 14px;margin-bottom:20px">
-          <img id="line-avatar" src="" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#1e7e34" id="line-display-name"></div>
-            <div style="font-size:11px;color:#888">เข้าสู่ระบบผ่าน LINE</div>
-          </div>
+      <div class="row">
+        <div class="field narrow">
+          <label>คำนำหน้า<span class="req">*</span></label>
+          <select id="r-title">
+            <option value="">-- เลือก --</option>
+            <option value="Mr.">นาย (Mr.)</option>
+            <option value="Ms.">นางสาว (Ms.)</option>
+            <option value="Mrs.">นาง (Mrs.)</option>
+          </select>
         </div>
-        <p class="sec-title">ข้อมูลส่วนตัว <span class="en-sm">(Personal info)</span></p>
-        <div class="row">
-          <div class="field narrow">
-            <label>คำนำหน้า<span class="req">*</span></label>
-            <select id="r-title">
-              <option value="">-- เลือก --</option>
-              <option value="Mr.">นาย (Mr.)</option>
-              <option value="Ms.">นางสาว (Ms.)</option>
-              <option value="Mrs.">นาง (Mrs.)</option>
-            </select>
-          </div>
-          <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
-        </div>
-        <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="r-lname" placeholder="นามสกุล"></div>
-        <div class="row">
-          <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
-          <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
-        </div>
-        <!-- ★ Address section removed — a fixed default address is now submitted automatically -->
-        <div id="debug-cardata" style="font-size:11px;color:#aaa;background:#f8f8f8;border-radius:6px;padding:8px 10px;margin-bottom:12px"></div>
-        <p class="sec-title">รถคันแรก <span class="en-sm">(First vehicle)</span></p>
-        <div class="row">
-          <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
-            <select id="r-carbrand" onchange="App.onCarBrandChange('r-carbrand','r-carmodel','r-brand-other-wrap','r-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
-            <img id="r-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
-          </div>
-          <div class="field"><label>รุ่น<span class="req">*</span></label>
-            <select id="r-carmodel" onchange="App.onCarModelChange('r-carmodel','r-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
-          </div>
-        </div>
-        <div class="field" id="r-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="r-carbrand-other"></div>
-        <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
-        <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
-        <div class="err-msg" id="regErr"></div>
-        <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก <span class="en-sm">(Register)</span></span></button>
+        <div class="field"><label>ชื่อ<span class="req">*</span></label><input type="text" id="r-fname" placeholder="ชื่อ"></div>
       </div>
+      <div class="field"><label>นามสกุล<span class="req">*</span></label><input type="text" id="r-lname" placeholder="นามสกุล"></div>
+      <div class="row">
+        <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
+        <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
+      </div>
+      <div id="debug-cardata" style="font-size:11px;color:#aaa;background:#f8f8f8;border-radius:6px;padding:8px 10px;margin-bottom:12px"></div>
+      <p class="sec-title">รถคันแรก</p>
+      <div class="row">
+        <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
+          <select id="r-carbrand" onchange="App.onCarBrandChange('r-carbrand','r-carmodel','r-brand-other-wrap','r-model-other-wrap')"><option value="">-- เลือกยี่ห้อ --</option></select>
+          <img id="r-brand-logo" style="display:none;width:44px;height:44px;object-fit:contain;background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:4px;margin-top:6px" onerror="this.style.display='none'">
+        </div>
+        <div class="field"><label>รุ่น<span class="req">*</span></label>
+          <select id="r-carmodel" onchange="App.onCarModelChange('r-carmodel','r-model-other-wrap')" disabled><option value="">-- เลือกยี่ห้อก่อน --</option></select>
+        </div>
+      </div>
+      <div class="field" id="r-brand-other-wrap" style="display:none"><label>ระบุยี่ห้อ<span class="req">*</span></label><input type="text" id="r-carbrand-other"></div>
+      <div class="field" id="r-model-other-wrap" style="display:none"><label>ระบุรุ่น<span class="req">*</span></label><input type="text" id="r-carmodel-other"></div>
+      <div class="field"><label>ทะเบียนรถ<span class="req">*</span></label><input type="text" id="r-license" placeholder="เช่น กข 1234"></div>
+      <div class="err-msg" id="regErr"></div>
+      <button class="btn btn-red" id="regBtn" onclick="App.submitRegister()" style="margin-top:16px"><span id="regLabel">สมัครสมาชิก</span></button>
     </div>
   </div>
 
@@ -374,7 +368,7 @@ App.showPage = function(id) {
   document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
   document.getElementById(id).classList.add("active");
   var logoBar = document.querySelector(".logo-bar");
-  var pagesWithOwnBanner = ["page-login","page-member","page-edit"];
+  var pagesWithOwnBanner = ["page-login","page-register","page-member","page-edit"];
   if (logoBar) logoBar.style.display = pagesWithOwnBanner.indexOf(id) !== -1 ? "none" : "flex";
   window.scrollTo(0,0);
 };
@@ -764,7 +758,7 @@ App.submitRegister = function() {
     carbrand:carbrand,carmodel:carmodel,license:license
   }})
   .then(function(res){
-    setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>");
+    setLoading("regBtn","regLabel",false,"สมัครสมาชิก");
     if(!res.success){
       var msg = "เกิดข้อผิดพลาด: "+res.error;
       if(res.error==="duplicate_line")   msg = "บัญชี LINE นี้มีสมาชิกอยู่แล้ว";
@@ -775,7 +769,7 @@ App.submitRegister = function() {
     _member=res.member; _cars=res.cars;
     App.showMemberPage();
   })
-  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก <span class=\"en-sm\">(Register)</span>"); showErr("regErr","Error: "+(err.message||err)); });
+  .catch(function(err){ setLoading("regBtn","regLabel",false,"สมัครสมาชิก"); showErr("regErr","Error: "+(err.message||err)); });
 };
 
 // ── Member page ──────────────────────────────────────────────
