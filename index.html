@@ -562,6 +562,7 @@ App.retryLogin = function() {
 
 App.start = function() {
   App.showPage("page-login"); // ensure logo-bar hides immediately (page-login has its own banner)
+  clearInterval(_progressTrickleTimer); // safety: clear any lingering trickle from a previous run
   _setLoginProgress(8);
   document.getElementById("login-msg").textContent = "Step 1: กำลัง init LIFF…";
   liff.init({ liffId: LIFF_ID })
@@ -571,9 +572,9 @@ App.start = function() {
       return liff.getProfile();
     })
     .then(function(profile) {
-      _setLoginProgress(65);
       document.getElementById("login-msg").textContent = "กำลังโหลดข้อมูล…";
       _lineProfile = profile;
+      _startProgressTrickle(65, 92); // creep slowly while waiting for the longest step
 
       // Load all data — each call handles its own retry via apiGet
       return Promise.all([
@@ -584,7 +585,7 @@ App.start = function() {
       ]);
     })
     .then(function(results) {
-      _setLoginProgress(100);
+      _stopProgressTrickle(100); // snap to done now that the data has actually arrived
       var memberRes = results[0];
       var carRes    = results[1];
 
@@ -605,6 +606,7 @@ App.start = function() {
       }
     })
     .catch(function(err) {
+      _stopProgressTrickle(); // stop the trickle timer without forcing a jump on failure
       document.getElementById("login-loading").style.display = "none";
       document.getElementById("login-error-msg").innerHTML   = "Error: "+(err.message||String(err));
       document.getElementById("login-error").style.display   = "block";
@@ -614,6 +616,29 @@ App.start = function() {
 function _setLoginProgress(pct){
   var el = document.getElementById("login-progress-fill");
   if (el) el.style.width = pct + "%";
+}
+
+// ── ★ NEW: Progress "trickle" — instead of holding still then snapping
+//    straight to 100%, slowly ease the bar toward a ceiling (never quite
+//    reaching it) while the actual longest-running step is still in
+//    flight, then jump to the real value once it resolves. Makes the
+//    longest wait (loading member + car data) feel less stalled. ──
+var _progressTrickleTimer = null;
+function _startProgressTrickle(from, ceiling){
+  clearInterval(_progressTrickleTimer);
+  var current = from;
+  _setLoginProgress(current);
+  _progressTrickleTimer = setInterval(function(){
+    var remaining = ceiling - current;
+    if (remaining <= 0.5) return;
+    current += remaining * 0.15; // eases off as it nears the ceiling
+    _setLoginProgress(current);
+  }, 350);
+}
+function _stopProgressTrickle(finalPct){
+  clearInterval(_progressTrickleTimer);
+  _progressTrickleTimer = null;
+  if (finalPct !== undefined) _setLoginProgress(finalPct);
 }
 
 
