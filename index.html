@@ -165,7 +165,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
         <div class="field"><label>เบอร์โทร<span class="req">*</span></label><input type="tel" id="r-phone" placeholder="08x-xxx-xxxx" maxlength="10"></div>
         <div class="field"><label>วันเกิด<span class="req">*</span></label><input type="text" id="r-birthday" placeholder="__/__/____" maxlength="10" inputmode="numeric"></div>
       </div>
-      <div id="debug-cardata" style="font-size:11px;color:#aaa;background:#f8f8f8;border-radius:6px;padding:8px 10px;margin-bottom:12px"></div>
       <p class="sec-title">รถคันแรก</p>
       <div class="row">
         <div class="field"><label>ยี่ห้อรถ<span class="req">*</span></label>
@@ -296,8 +295,6 @@ input[readonly]{background:#fff8f8;color:#cc0000;font-weight:600;cursor:default}
   </div>
 </div>
 
-
-
 <!-- Confirm delete modal -->
 <div class="modal-backdrop" id="confirmModal">
   <div class="confirm-box">
@@ -326,7 +323,7 @@ var FIXED_DISTRICT     = "บางพลี";
 var FIXED_SUBDISTRICT  = "บางพลีใหญ่";
 var FIXED_ZIP          = "10540";
 
-// ── ★ NEW: All 77 Thai provinces, for the license plate's registering
+// ── ★ All 77 Thai provinces, for the license plate's registering
 //    province dropdown (distinct from FIXED_PROVINCE above, which is
 //    the member's own home address province, not the car's plate). ──
 var THAI_PROVINCES = [
@@ -356,7 +353,7 @@ var _delCarId    = null;
 var _lineProfile = null;
 var _clientData  = null;
 var _carData     = [];
-var _carDataError = ""; // ★ NEW — last error from getCarData, shown to staff/customer instead of a generic message
+var _carDataError = "";
 
 // ── API helpers ──────────────────────────────────────────────
 function apiGet(params, retries) {
@@ -408,7 +405,7 @@ function thaiTitle(title) {
   if (title === "Mr.")  return "นาย";
   if (title === "Ms.")  return "นางสาว";
   if (title === "Mrs.") return "นาง";
-  return title; // fallback: show whatever was stored (e.g. old Thai-titled members)
+  return title;
 }
 function fmtBirthday(v){
   if(!v) return "—";
@@ -427,7 +424,7 @@ function resetSel(id,ph){
 // ── ★ Birthday mask: fixed __/__/____ template — slashes never move,
 //    underscores get replaced by typed digits, cursor auto-skips slashes ──
 var DATE_MASK = "__/__/____";
-var DATE_DIGIT_POS = [0,1,3,4,6,7,8,9]; // indices in the mask that hold digits
+var DATE_DIGIT_POS = [0,1,3,4,6,7,8,9];
 
 function attachDateMask(inputId) {
   var el = document.getElementById(inputId);
@@ -479,11 +476,7 @@ function attachDateMask(inputId) {
   });
 }
 
-// ── ★ Validates + parses the masked input. Returns:
-//    { empty:true }                      — nothing typed
-//    { empty:false, valid:false }        — typed but not a real date
-//    { empty:false, valid:true, iso:"YYYY-MM-DD" } — good, converted from
-//      Buddhist Era to Gregorian automatically if year > 2400 ──
+// ── ★ Validates + parses the masked input. ──
 function parseBirthdayInput(inputId) {
   var val = document.getElementById(inputId).value || "";
   if (!val || val === DATE_MASK) return { empty: true };
@@ -495,7 +488,7 @@ function parseBirthdayInput(inputId) {
   var day   = parseInt(digits.slice(0, 2), 10);
   var month = parseInt(digits.slice(2, 4), 10);
   var year  = parseInt(digits.slice(4, 8), 10);
-  if (year > 2400) year -= 543; // Buddhist Era → Gregorian
+  if (year > 2400) year -= 543;
 
   if (month < 1 || month > 12) return { empty: false, valid: false };
   var daysInMonth = new Date(year, month, 0).getDate();
@@ -507,27 +500,20 @@ function parseBirthdayInput(inputId) {
   return { empty: false, valid: true, iso: year + "-" + mm + "-" + dd };
 }
 
-// ── ★ NEW: Validates a Thai mobile number — must be exactly 10 digits
-//    and start with 0 (e.g. 0812345678). Rejects anything else instead
-//    of silently accepting numbers missing the leading 0. ──
+// ── ★ Validates a Thai mobile number — must be exactly 10 digits
+//    and start with 0 (e.g. 0812345678). ──
 function isValidThaiPhone(phone) {
   var digits = String(phone || "").replace(/\D/g, "");
   return /^0\d{9}$/.test(digits);
 }
 
-// ── Converts a stored birthday value back into the DD/MM/YYYY mask for
-//    display. Handles both a clean "YYYY-MM-DD" string AND cases where
-//    Google Sheets silently auto-converted the stored value into a Date
-//    (which comes back as a verbose string like "Fri Jun 15 1990...")
-//    — without this fallback, opening Edit on an existing member showed
-//    a blank date instead of their actual birthday. ──
+// ── Converts a stored birthday value back into the DD/MM/YYYY mask ──
 function isoToDisplayDate(iso) {
   if (!iso) return DATE_MASK;
   var parts = String(iso).split("-");
   if (parts.length === 3 && /^\d{4}$/.test(parts[0])) {
     return parts[2].slice(0, 2) + "/" + parts[1].slice(0,2) + "/" + parts[0];
   }
-  // Fallback: not a clean "YYYY-MM-DD" string — try parsing it directly.
   var d = new Date(iso);
   if (isNaN(d.getTime())) return DATE_MASK;
   var dd = String(d.getDate()).padStart(2, "0");
@@ -535,9 +521,7 @@ function isoToDisplayDate(iso) {
   return dd + "/" + mm + "/" + d.getFullYear();
 }
 
-// ── ★ NEW: Render vehicle history for a given car — tire info +
-//    a merged table of "เปลี่ยนยาง" plus every logged service, numbered
-//    per service type. Called whenever the current car changes. ──
+// ── ★ Render vehicle history for a given car ──
 function _renderHistory(car) {
   var infoEl = document.getElementById("history-tire-info");
   var wrapEl = document.getElementById("history-table-wrap");
@@ -588,8 +572,8 @@ App.retryLogin = function() {
 };
 
 App.start = function() {
-  App.showPage("page-login"); // ensure logo-bar hides immediately (page-login has its own banner)
-  clearInterval(_progressTrickleTimer); // safety: clear any lingering trickle from a previous run
+  App.showPage("page-login");
+  clearInterval(_progressTrickleTimer);
   _setLoginProgress(8);
   document.getElementById("login-msg").textContent = "Step 1: กำลัง init LIFF…";
   liff.init({ liffId: LIFF_ID })
@@ -601,28 +585,23 @@ App.start = function() {
     .then(function(profile) {
       document.getElementById("login-msg").textContent = "กำลังโหลดข้อมูล…";
       _lineProfile = profile;
-      _startProgressTrickle(65, 92); // creep slowly while waiting for the longest step
+      _startProgressTrickle(65, 92);
 
-      // Load all data — each call handles its own retry via apiGet
       return Promise.all([
         apiGet({ action:"checkLineUser", lineUserId:profile.userId })
           .catch(function(){ return { exists:false, error:"checkLineUser failed" }; }),
         apiGet({ action:"getCarData" })
-          .catch(function(err){ return { success:false, brands:[], error:"เชื่อมต่อไม่ได้: "+(err.message||err) }; }) // ★ FIXED — used to swallow the real error
+          .catch(function(err){ return { success:false, brands:[], error:"เชื่อมต่อไม่ได้: "+(err.message||err) }; })
       ]);
     })
     .then(function(results) {
-      _stopProgressTrickle(100); // snap to done now that the data has actually arrived
+      _stopProgressTrickle(100);
       var memberRes = results[0];
       var carRes    = results[1];
 
       if (carRes.success && carRes.brands)  _carData    = carRes.brands;
-      else                                   _carDataError = carRes.error || ""; // ★ NEW
-      _populateRegions(); // ★ FIX: always populate brand dropdowns (both r-carbrand
-                           //   and m-carbrand) here, not just when going to Register —
-                           //   previously this only ran in showRegisterPage(), so
-                           //   returning members who go straight to showMemberPage()
-                           //   never had the Add Car modal's dropdown populated.
+      else                                   _carDataError = carRes.error || "";
+      _populateRegions();
 
       if (memberRes.exists) {
         _member = memberRes.member;
@@ -633,7 +612,7 @@ App.start = function() {
       }
     })
     .catch(function(err) {
-      _stopProgressTrickle(); // stop the trickle timer without forcing a jump on failure
+      _stopProgressTrickle();
       document.getElementById("login-loading").style.display = "none";
       document.getElementById("login-error-msg").innerHTML   = "Error: "+(err.message||String(err));
       document.getElementById("login-error").style.display   = "block";
@@ -645,11 +624,6 @@ function _setLoginProgress(pct){
   if (el) el.style.width = pct + "%";
 }
 
-// ── ★ NEW: Progress "trickle" — instead of holding still then snapping
-//    straight to 100%, slowly ease the bar toward a ceiling (never quite
-//    reaching it) while the actual longest-running step is still in
-//    flight, then jump to the real value once it resolves. Makes the
-//    longest wait (loading member + car data) feel less stalled. ──
 var _progressTrickleTimer = null;
 function _startProgressTrickle(from, ceiling){
   clearInterval(_progressTrickleTimer);
@@ -658,7 +632,7 @@ function _startProgressTrickle(from, ceiling){
   _progressTrickleTimer = setInterval(function(){
     var remaining = ceiling - current;
     if (remaining <= 0.5) return;
-    current += remaining * 0.15; // eases off as it nears the ceiling
+    current += remaining * 0.15;
     _setLoginProgress(current);
   }, 350);
 }
@@ -667,7 +641,6 @@ function _stopProgressTrickle(finalPct){
   _progressTrickleTimer = null;
   if (finalPct !== undefined) _setLoginProgress(finalPct);
 }
-
 
 // ── Populate car brand dropdowns ──────────────────────────────
 function _populateRegions() {
@@ -682,8 +655,6 @@ function _populateRegions() {
 }
 
 // ── Car cascade ──────────────────────────────────────────────
-// ★ NEW: Look up a brand's logo URL from _carData (loaded via
-//    getCarData → now backed by the "Car_Brands&Models" sheet).
 function _carBrandLogo(name){
   var found = _carData.filter(function(b){ return b.name.toLowerCase()===String(name||"").toLowerCase(); })[0];
   return found ? found.imageUrl : "";
@@ -696,7 +667,6 @@ App.onCarBrandChange = function(brandId, modelId, brandWrapId, modelWrapId) {
   while(mS.options.length)mS.remove(0);
   var ph=document.createElement("option");ph.value="";ph.textContent=b?"-- เลือกรุ่น --":"-- เลือกยี่ห้อก่อน --";mS.appendChild(ph);
   mS.disabled=!b;
-  // ★ NEW: show/hide the brand logo preview next to the select
   var logoImg = document.getElementById(brandId.split("-")[0]+"-brand-logo");
   if (logoImg) {
     var logoUrl = (b && b!=="__other__") ? _carBrandLogo(b) : "";
@@ -724,31 +694,19 @@ App.showRegisterPage = function() {
   _populateRegions();
   _populateProvinceSelect("r-plate-province");
   document.getElementById("r-plate-province").selectedIndex = 0;
-  document.getElementById("r-brand-logo").style.display="none"; // ★ NEW
-  // ★ TEMP DEBUG: visible on-page status line (no dev tools needed) —
-  //   shows exactly how many brands loaded, the select's actual option
-  //   count, and any backend error, so this can be screenshotted directly
-  //   from a phone/LINE in-app browser. Safe to remove once diagnosed.
-  document.getElementById("debug-cardata").textContent =
-    "Debug: _carData=" + _carData.length +
-    " | r-carbrand options=" + document.getElementById("r-carbrand").options.length +
-    (_carDataError ? " | error: " + _carDataError : "");
-  // Warn if dropdown data didn't load — show the real backend error (which
-  // now includes diagnostic info like actual sheet names found) instead of
-  // a generic message, so this is actually debuggable.
+  document.getElementById("r-brand-logo").style.display="none";
+  // Warn if dropdown data didn't load — show the real backend error
+  // instead of a generic message.
   if (!_carData.length) {
     showErr("regErr", _carDataError || "ข้อมูลโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
     setTimeout(function() {
-      // Retry loading missing data
       apiGet({action:"getCarData"}).then(function(r){
         if(r.success && r.brands && r.brands.length){
           _carData=r.brands; _populateRegions(); hideErr("regErr");
-          document.getElementById("debug-cardata").textContent = "Debug: _carData=" + _carData.length + " (loaded on retry)";
         }
         else {
           _carDataError = r.error || _carDataError;
           showErr("regErr", _carDataError || "โหลดไม่สำเร็จ");
-          document.getElementById("debug-cardata").textContent = "Debug: retry failed | error: " + (_carDataError || "unknown");
         }
       });
     }, 1500);
@@ -791,7 +749,6 @@ App.submitRegister = function() {
   apiPost({ action:"saveMember", data:{
     lineUserId:_lineProfile?_lineProfile.userId:"",
     title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday,
-    // ★ Fixed default address — no longer typed by the customer
     address:FIXED_ADDRESS,region:FIXED_REGION,province:FIXED_PROVINCE,district:FIXED_DISTRICT,
     subdistrict:FIXED_SUBDISTRICT,zipcode:FIXED_ZIP,
     carbrand:carbrand,carmodel:carmodel,license:license,plateProvince:plateProvince
@@ -820,13 +777,11 @@ App.showMemberPage = function() {
   document.getElementById("mi-lastname").textContent  = _member.lastname;
   document.getElementById("mi-phone").textContent     = fmtPhone(_member.phone);
   document.getElementById("mi-birthday").textContent  = fmtBirthday(_member.birthday);
-  _generateMemberQR(); // one QR per member, not per car
+  _generateMemberQR();
   _carIdx=0;
-  App.switchTab("tab-qr"); // always land on the QR tab first
+  App.switchTab("tab-qr");
   App.showPage("page-member");
 
-  // Deep link: if opened via ?action=addcar (e.g. from the LINE bot's
-  // "+ เพิ่มรถ" button), jump straight into the Add Car modal.
   var params = new URLSearchParams(window.location.search);
   if (params.get("action") === "addcar") {
     App.openAddCar();
@@ -848,16 +803,9 @@ App.updateMemberInfo = function(m) {
 App.switchTab = function(tabId){
   document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.toggle("active", p.id===tabId); });
   document.querySelectorAll(".nav-item").forEach(function(n){ n.classList.toggle("active", n.id==="nav-"+tabId); });
-  // Every time the car tab is opened, start from the picker list when
-  // there's more than one car — don't stay on whatever was picked last.
   if (tabId === "tab-car") _renderCarTab();
 };
 
-// ── Car tab: with 0 cars, shows an empty state. With exactly 1 car,
-//    skips the picker entirely and shows that car directly. With 2+
-//    cars, always opens on the picker list first (see switchTab above);
-//    tapping a car switches to the detail view, and "เปลี่ยนรถ" goes
-//    back to the list. ──
 function _renderCarTab(){
   var listView   = document.getElementById("car-list-view");
   var detailView = document.getElementById("car-detail-view");
@@ -905,8 +853,6 @@ function _showCarDetail(idx){
   _renderHistory(car);
 }
 
-// ── Shared markup for a single car row (logo | brand | model | plate) —
-//    used by both the car detail summary and the picker list ──
 function _carCardHtml(car){
   var logo = _carBrandLogo(car.carbrand);
   var logoHtml = logo
@@ -927,9 +873,6 @@ function _carCardHtml(car){
   '</div>';
 }
 
-// ── QR now encodes the MemberID only, not a specific car. Staff scan
-//    this once, then pick which of the member's cars applies on the
-//    scanner side — so this only needs to run once per member. ──
 function _generateMemberQR(){
   if (!_member || !_member.id) return;
   var canvas=document.getElementById("qrCanvas"),ctx=canvas.getContext("2d");
@@ -950,10 +893,8 @@ App.openAddCar = function(){
   document.getElementById("m-license").value="";
   document.getElementById("m-brand-other-wrap").style.display="none";
   document.getElementById("m-model-other-wrap").style.display="none";
-  document.getElementById("m-brand-logo").style.display="none"; // ★ NEW
+  document.getElementById("m-brand-logo").style.display="none";
   hideErr("addCarErr");
-  // ★ NEW: warn (and retry) if brand/model dropdown data never loaded,
-  //   instead of silently showing an empty dropdown with no explanation
   if (!_carData.length) {
     showErr("addCarErr", _carDataError || "ข้อมูลยี่ห้อรถโหลดไม่ครบ กรุณารอสักครู่แล้วลองใหม่ (Data not loaded, please wait and retry)");
     apiGet({action:"getCarData"}).then(function(r){
@@ -1030,8 +971,6 @@ App.saveEdit = function(){
     showErr("editErr","เบอร์โทรไม่ถูกต้อง กรุณากรอกเบอร์ 10 หลักที่ขึ้นต้นด้วย 0 (เช่น 0812345678)"); return;
   }
   setLoading("saveEditBtn","saveEditLabel",true,"");
-  // ★ Address fields are no longer editable here — the member's address
-  //   stays whatever was already saved (fixed default for new signups).
   apiPost({action:"updateMember",data:{memberId:_member.id,title:title,firstname:fname,lastname:lname,phone:phone,birthday:birthday}})
     .then(function(res){
       setLoading("saveEditBtn","saveEditLabel",false,"บันทึกข้อมูล");
@@ -1054,8 +993,6 @@ window.addEventListener("load", function() {
 </script>
 
 <script>
-// ── Auto-clear caches/service workers on every load, so code updates
-//    always take effect instead of serving a stale cached version ──
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(function(regs){
     regs.forEach(function(r){ r.unregister(); });
